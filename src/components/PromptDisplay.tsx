@@ -5,6 +5,7 @@ import { useWakeLock } from '../hooks/useWakeLock'
 import { useGestures } from '../hooks/useGestures'
 import { useOrientation } from '../hooks/useOrientation'
 import { isRotatedQuarter, transformCss } from '../utils/transform'
+import { lensWindowSizePx } from '../utils/lens'
 import { Countdown } from './Countdown'
 
 const DYSLEXIA_STACK = "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', 'Verdana', sans-serif"
@@ -13,6 +14,7 @@ const DEFAULT_STACK =
 
 export function PromptDisplay() {
   const viewportRef = useRef<HTMLDivElement>(null)
+  const layerRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLDivElement>(null)
   const preRollRef = useRef<HTMLDivElement>(null)
@@ -23,6 +25,7 @@ export function PromptDisplay() {
   const transform = useAppStore((s) => s.config.transform)
   const typo = useAppStore((s) => s.config.typography)
   const colors = useAppStore((s) => s.config.colors)
+  const lens = useAppStore((s) => s.config.lens)
   const gesturesEnabled = useAppStore((s) => s.settings.gesturesEnabled)
   const keepAwake = useAppStore((s) => s.settings.keepAwake)
   const ended = useAppStore((s) => s.ended)
@@ -31,13 +34,22 @@ export function PromptDisplay() {
     return s.scripts.find((x) => x.id === id)?.body ?? ''
   })
 
-  useScrollEngine({ viewportRef, scrollerRef, textRef, preRollRef, bottomRef })
+  useScrollEngine({ layerRef, scrollerRef, textRef, preRollRef, bottomRef })
   useWakeLock(keepAwake)
   useGestures(viewportRef, gesturesEnabled)
 
   const rotated = isRotatedQuarter(transform.rotateDeg)
-  const layerW = rotated ? viewport.height : viewport.width
-  const layerH = rotated ? viewport.width : viewport.height
+  let layerW: number
+  let layerH: number
+  if (lens.enabled) {
+    // Centered square window sized to the lens opening (capped to fit the screen).
+    const side = lensWindowSizePx(lens.sizeMm, viewport.width, viewport.height)
+    layerW = side
+    layerH = side
+  } else {
+    layerW = rotated ? viewport.height : viewport.width
+    layerH = rotated ? viewport.width : viewport.height
+  }
 
   const paragraphs = useMemo(() => body.split(/\n{2,}/), [body])
 
@@ -60,10 +72,18 @@ export function PromptDisplay() {
     height: `${layerH}px`,
     transform: transformCss(transform),
   }
+  if (lens.enabled) {
+    if (lens.showBorder) layerStyle.outline = '2px solid rgba(56, 189, 248, 0.65)'
+    if (lens.edgeFade) {
+      const fade = 'linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%)'
+      layerStyle.WebkitMaskImage = fade
+      layerStyle.maskImage = fade
+    }
+  }
 
   return (
     <div className="reader__viewport" ref={viewportRef} style={{ background: colors.background }}>
-      <div className="reader__layer" style={layerStyle}>
+      <div className="reader__layer" ref={layerRef} style={layerStyle}>
         <div className="reader__scroller" ref={scrollerRef}>
           <div ref={preRollRef} aria-hidden="true" />
           <div className="prompt-text" ref={textRef} style={textStyle}>

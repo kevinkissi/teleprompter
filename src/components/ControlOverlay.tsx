@@ -7,6 +7,8 @@ import {
   FONT_MAX,
   FONT_MIN,
   FONT_STEP,
+  LENS_MAX_MM,
+  LENS_MIN_MM,
   LINE_HEIGHT_MAX,
   LINE_HEIGHT_MIN,
   MARGIN_MAX,
@@ -17,6 +19,7 @@ import {
   WPM_STEP_SMALL,
 } from '../state/defaults'
 import { TRANSFORM_MODES, findTransformMode } from '../utils/transform'
+import { LENS_PRESETS } from '../utils/lens'
 
 interface CtrlProps {
   icon: IconName
@@ -50,6 +53,7 @@ function QuickSettings({ onClose }: { onClose: () => void }) {
   const setScroll = useAppStore((s) => s.setScroll)
   const setTypography = useAppStore((s) => s.setTypography)
   const setTransformState = useAppStore((s) => s.setTransformState)
+  const setLens = useAppStore((s) => s.setLens)
   const activeMode = findTransformMode(config.transform)
 
   const quickModes = TRANSFORM_MODES.slice(0, 4) // Normal, Mirror L/R, Mirror T/B, Flip Both
@@ -120,6 +124,37 @@ function QuickSettings({ onClose }: { onClose: () => void }) {
         />
       </div>
 
+      {config.lens.enabled && (
+        <div className="field">
+          <div className="field__label">
+            <span>Lens window</span>
+            <span className="field__value">{config.lens.sizeMm}mm</span>
+          </div>
+          <input
+            type="range"
+            aria-label="Lens window size in millimetres"
+            min={LENS_MIN_MM}
+            max={LENS_MAX_MM}
+            step={1}
+            value={config.lens.sizeMm}
+            onChange={(e) => setLens({ sizeMm: Number(e.target.value) })}
+          />
+          <div className="wrap" style={{ marginTop: 6 }}>
+            {LENS_PRESETS.slice(0, 3).map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className={'seg__opt' + (config.lens.sizeMm === p.sizeMm ? ' seg__opt--active' : '')}
+                style={{ border: '1px solid var(--border)', borderRadius: 8 }}
+                onClick={() => setLens({ sizeMm: p.sizeMm })}
+              >
+                {p.sizeMm}mm
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="field">
         <div className="field__label">
           <span>Mirror</span>
@@ -158,6 +193,8 @@ export function ControlOverlay() {
   const fontSizePx = useAppStore((s) => s.config.typography.fontSizePx)
   const mirrorX = useAppStore((s) => s.config.transform.mirrorX)
   const rotateDeg = useAppStore((s) => s.config.transform.rotateDeg)
+  const lensEnabled = useAppStore((s) => s.config.lens.enabled)
+  const lensSizeMm = useAppStore((s) => s.config.lens.sizeMm)
   const title = useAppStore((s) => {
     const id = s.currentScriptId
     return s.scripts.find((x) => x.id === id)?.title ?? 'Teleprompter'
@@ -168,6 +205,7 @@ export function ControlOverlay() {
   const adjustFont = useAppStore((s) => s.adjustFont)
   const toggleMirrorX = useAppStore((s) => s.toggleMirrorX)
   const rotate = useAppStore((s) => s.rotate)
+  const toggleLens = useAppStore((s) => s.toggleLens)
   const closeReader = useAppStore((s) => s.closeReader)
 
   return (
@@ -230,6 +268,13 @@ export function ControlOverlay() {
             value={`${rotateDeg}°`}
             onClick={() => rotate(1)}
             active={rotateDeg !== 0}
+          />
+          <Ctrl
+            icon="target"
+            label="Lens"
+            value={lensEnabled ? `${lensSizeMm}mm` : 'off'}
+            onClick={toggleLens}
+            active={lensEnabled}
           />
           <Ctrl icon="sliders" label="More" onClick={() => setQuickOpen((v) => !v)} active={quickOpen} />
         </div>

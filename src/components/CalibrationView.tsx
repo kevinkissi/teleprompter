@@ -4,6 +4,8 @@ import { LabeledRange, Row, Segmented, Toggle } from './ui'
 import {
   FONT_MAX,
   FONT_MIN,
+  LENS_MAX_MM,
+  LENS_MIN_MM,
   LETTER_SPACING_MAX,
   LETTER_SPACING_MIN,
   LINE_HEIGHT_MAX,
@@ -17,6 +19,7 @@ import {
   WPM_MAX,
   WPM_MIN,
 } from '../state/defaults'
+import { IPHONE_17PM_SCREEN_MM, LENS_PRESETS } from '../utils/lens'
 import {
   TRANSFORM_MODES,
   findTransformMode,
@@ -112,6 +115,108 @@ function PreviewStage() {
   )
 }
 
+function LensSection() {
+  const lens = useAppStore((s) => s.config.lens)
+  const setLens = useAppStore((s) => s.setLens)
+
+  const SW = IPHONE_17PM_SCREEN_MM.width
+  const SH = IPHONE_17PM_SCREEN_MM.height
+  const sideMm = Math.min(lens.sizeMm, SW)
+  const mockH = 200
+  const scale = mockH / SH
+  const mockW = SW * scale
+  const sq = sideMm * scale
+
+  return (
+    <div>
+      <div className="section-title">Camera lens window</div>
+      <p className="field__hint" style={{ marginTop: 0 }}>
+        Confines the script to a centered square about the size of your lens opening, so your eyes
+        stay over the lens and you always look straight into the camera. Everything outside the
+        window is hidden. iPhone 17 Pro Max is ~73mm wide; a Sony 24–70 lens is ~67–82mm.
+      </p>
+
+      <Row label="Lens window" desc="Toggle the centered reading window on or off.">
+        <Toggle checked={lens.enabled} onChange={(v) => setLens({ enabled: v })} label="Lens window" />
+      </Row>
+
+      {lens.enabled && (
+        <>
+          <div style={{ display: 'flex', gap: 16, alignItems: 'center', margin: '12px 0' }}>
+            <div
+              style={{
+                position: 'relative',
+                width: mockW,
+                height: mockH,
+                flex: 'none',
+                background: '#000',
+                border: '2px solid var(--border)',
+                borderRadius: 14,
+              }}
+              aria-hidden="true"
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: '50%',
+                  width: sq,
+                  height: sq,
+                  transform: 'translate(-50%, -50%)',
+                  border: '2px solid var(--accent)',
+                  borderRadius: 4,
+                  background: 'rgba(56,189,248,0.12)',
+                }}
+              />
+            </div>
+            <div className="muted" style={{ fontSize: 13 }}>
+              Window ≈ {sideMm.toFixed(0)}mm square<br />
+              of a {SW.toFixed(0)}×{SH.toFixed(0)}mm screen
+            </div>
+          </div>
+
+          <div className="field__label" style={{ marginTop: 8 }}>
+            <span>Lens size / opening</span>
+          </div>
+          <div className="wrap" style={{ marginBottom: 12 }}>
+            {LENS_PRESETS.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className={'btn' + (lens.sizeMm === p.sizeMm ? ' btn--primary' : ' btn--ghost')}
+                onClick={() => setLens({ sizeMm: p.sizeMm })}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+
+          <LabeledRange
+            label="Window size"
+            value={lens.sizeMm}
+            display={`${lens.sizeMm}mm`}
+            min={LENS_MIN_MM}
+            max={LENS_MAX_MM}
+            hint="Fine-tune until the lit area matches your lens opening through the glass."
+            onChange={(v) => setLens({ sizeMm: v })}
+          />
+
+          <Row label="Show window border">
+            <Toggle
+              checked={lens.showBorder}
+              onChange={(v) => setLens({ showBorder: v })}
+              label="Show window border"
+            />
+          </Row>
+          <Row label="Soft edge fade" desc="Fade text in/out at the window edges instead of a hard cut.">
+            <Toggle checked={lens.edgeFade} onChange={(v) => setLens({ edgeFade: v })} label="Soft edge fade" />
+          </Row>
+        </>
+      )}
+    </div>
+  )
+}
+
 const COLOR_PRESETS = [
   { bg: '#000000', text: '#ffffff', label: 'White on black' },
   { bg: '#000000', text: '#ffe600', label: 'Yellow on black' },
@@ -170,6 +275,8 @@ export function CalibrationView() {
           </button>
         ))}
       </div>
+
+      <LensSection />
 
       <div className="section-title">Typography</div>
       <LabeledRange

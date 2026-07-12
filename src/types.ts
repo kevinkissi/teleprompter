@@ -38,12 +38,28 @@ export interface Colors {
   text: string
 }
 
+/**
+ * "Lens window" — confines the reading text to a centered square roughly the size of
+ * the camera's lens opening, so the reader's eyes stay over the lens and always appear
+ * to look straight into the camera. Everything outside the window is masked.
+ */
+export interface LensWindow {
+  enabled: boolean
+  /** Window side length in millimetres (mapped to px via the device density). */
+  sizeMm: number
+  /** Draw a thin outline around the window. */
+  showBorder: boolean
+  /** Soft fade at the top/bottom edges of the window instead of a hard clip. */
+  edgeFade: boolean
+}
+
 /** The full live prompter configuration. A Preset is a saved snapshot of this. */
 export interface PrompterConfig {
   transform: TransformState
   typography: Typography
   scroll: ScrollConfig
   colors: Colors
+  lens: LensWindow
 }
 
 export interface Preset extends PrompterConfig {

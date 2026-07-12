@@ -3,10 +3,10 @@ import { useAppStore } from '../state/appStore'
 import { scrollController } from '../state/scrollController'
 import { clamp } from '../state/defaults'
 import { countWords } from '../utils/estimateReadTime'
-import { isRotatedQuarter } from '../utils/transform'
 
 interface ScrollEngineRefs {
-  viewportRef: RefObject<HTMLDivElement | null>
+  /** The clipping reading window (full-screen normally, or the lens square). */
+  layerRef: RefObject<HTMLDivElement | null>
   scrollerRef: RefObject<HTMLDivElement | null>
   textRef: RefObject<HTMLDivElement | null>
   preRollRef: RefObject<HTMLDivElement | null>
@@ -38,7 +38,7 @@ export function useScrollEngine(refs: ScrollEngineRefs): void {
   const lastPersistTsRef = useRef(0)
 
   useEffect(() => {
-    const { viewportRef, scrollerRef, textRef, preRollRef, bottomRef } = refs
+    const { layerRef, scrollerRef, textRef, preRollRef, bottomRef } = refs
 
     function applyTransform(): void {
       const scroller = scrollerRef.current
@@ -78,18 +78,17 @@ export function useScrollEngine(refs: ScrollEngineRefs): void {
     }
 
     function recompute(): void {
-      const viewport = viewportRef.current
+      const layer = layerRef.current
       const text = textRef.current
-      if (!viewport || !text) return
+      if (!layer || !text) return
       const { config, currentScriptId, scripts } = useAppStore.getState()
 
       const prev = metricsRef.current
       const frac = prev.maxScroll > 0 ? posRef.current / prev.maxScroll : null
 
-      const rotated = isRotatedQuarter(config.transform.rotateDeg)
-      const vw = viewport.clientWidth
-      const vh = viewport.clientHeight
-      const readingLen = rotated ? vw : vh
+      // The reading window's extent along the scroll (local Y) axis. This is the full
+      // screen height normally, or the lens square's side when the lens window is on.
+      const readingLen = layer.clientHeight
       const textHeight = text.scrollHeight
       const preRollPx = (config.scroll.preRollVh / 100) * readingLen
       // Bottom padding lets the final line settle at the reading line (centre).
@@ -216,10 +215,11 @@ export function useScrollEngine(refs: ScrollEngineRefs): void {
     applyTransform()
     pushProgress(true)
 
-    // Recompute when the text block or viewport changes size (font, rotation, orientation).
+    // Recompute when the text block or the reading window changes size
+    // (font, rotation, orientation, or toggling/resizing the lens window).
     const ro = new ResizeObserver(() => recompute())
     if (textRef.current) ro.observe(textRef.current)
-    if (viewportRef.current) ro.observe(viewportRef.current)
+    if (layerRef.current) ro.observe(layerRef.current)
     const onResize = () => recompute()
     window.addEventListener('resize', onResize)
     window.addEventListener('orientationchange', onResize)

@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import type {
   AppSettings,
   Colors,
+  LensWindow,
   Preset,
   PrompterConfig,
   RotateDeg,
@@ -74,6 +75,8 @@ interface AppState {
   setTypography: (patch: Partial<Typography>) => void
   setScroll: (patch: Partial<ScrollConfig>) => void
   setColors: (patch: Partial<Colors>) => void
+  setLens: (patch: Partial<LensWindow>) => void
+  toggleLens: () => void
   adjustFont: (delta: number) => void
   adjustSpeed: (delta: number) => void
   toggleMirrorX: () => void
@@ -241,6 +244,14 @@ export const useAppStore = create<AppState>()(
       setColors(patch) {
         set((s) => ({ config: { ...s.config, colors: { ...s.config.colors, ...patch } } }))
       },
+      setLens(patch) {
+        set((s) => ({ config: { ...s.config, lens: { ...s.config.lens, ...patch } } }))
+        // Toggling / resizing the window changes the reading bounds.
+        scrollController.current.recompute()
+      },
+      toggleLens() {
+        get().setLens({ enabled: !get().config.lens.enabled })
+      },
       adjustFont(delta) {
         set((s) => ({
           config: {
@@ -392,7 +403,15 @@ export const useAppStore = create<AppState>()(
     {
       name: 'teleprompter-state',
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
+      // v2 added config.lens — backfill it for state persisted before the feature.
+      migrate: (persisted, version) => {
+        const s = persisted as { config?: Partial<PrompterConfig> } | undefined
+        if (s?.config && !s.config.lens && version < 2) {
+          s.config.lens = { ...DEFAULT_CONFIG.lens }
+        }
+        return s as unknown as AppState
+      },
       partialize: (s) => ({
         config: s.config,
         settings: s.settings,

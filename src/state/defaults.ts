@@ -23,6 +23,12 @@ export const DEFAULT_CONFIG: PrompterConfig = {
     loop: false,
   },
   colors: { background: '#000000', text: '#ffffff' },
+  lens: {
+    enabled: false,
+    sizeMm: 70,
+    showBorder: true,
+    edgeFade: true,
+  },
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -58,6 +64,9 @@ export const WORD_SPACING_MAX = 32
 
 export const PREROLL_MIN = 0
 export const PREROLL_MAX = 90
+
+export const LENS_MIN_MM = 30
+export const LENS_MAX_MM = 120
 
 /** Seconds jumped by rewind / forward controls. */
 export const NUDGE_SECONDS = 5

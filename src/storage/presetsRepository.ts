@@ -98,6 +98,8 @@ export function presetToConfig(preset: Preset): PrompterConfig {
     typography: preset.typography,
     scroll: preset.scroll,
     colors: preset.colors,
+    // Presets stored before the lens feature won't have a lens field.
+    lens: preset.lens ?? DEFAULT_CONFIG.lens,
   })
 }
 
@@ -108,5 +110,6 @@ export function structuredCloneConfig(config: PrompterConfig): PrompterConfig {
     typography: { ...config.typography },
     scroll: { ...config.scroll },
     colors: { ...config.colors },
+    lens: { ...(config.lens ?? DEFAULT_CONFIG.lens) },
   }
 }

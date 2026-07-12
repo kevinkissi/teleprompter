@@ -479,6 +479,8 @@ input[type='range'] {
   top: 50%;
   transform-origin: center center;
   will-change: transform;
+  /* Clips the reading text to the window (full-screen normally, lens square when on). */
+  overflow: hidden;
 }
 .reader__scroller {
   will-change: transform;

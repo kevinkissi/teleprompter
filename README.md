@@ -45,6 +45,17 @@ npm run icons      # regenerate the PWA icons (dependency-free PNG generator)
 - Auto-hiding controls while scrolling (tap to reveal); the control overlay is **never mirrored**,
   only the reading text and countdown are.
 
+### Lens window (eyeline over the camera)
+
+A one‑tap **Lens** mode confines the script to a centered square roughly the size of the camera's
+lens opening, so your eyes never drift off the lens and you always appear to look straight into the
+camera. Everything outside the window is masked, with a soft edge fade. Sizes are set in real
+millimetres (mapped via the iPhone 17 Pro Max display density, ~6.04 CSS px/mm, and a 1:1
+beam‑splitter reflection) with presets for common lenses (e.g. Sony FE 24‑70 GM 82 mm, 24‑70 f/4
+67 mm). Because the phone (~73 mm wide) is about as wide as the lens, the window mainly crops the
+**vertical** reading band. Toggle it from the reader's **Lens** button or configure size, border,
+and fade in **Setup**; the default is the full‑screen reader (feature off).
+
 ### Mirroring & rotation (first-class)
 
 All 11 orientations from the spec are reachable from **Setup** and the in-reader quick panel:
