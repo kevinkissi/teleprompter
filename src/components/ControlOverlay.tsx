@@ -20,6 +20,8 @@ import {
 } from '../state/defaults'
 import { TRANSFORM_MODES, findTransformMode } from '../utils/transform'
 import { LENS_PRESETS } from '../utils/lens'
+import { RemotePanel } from './RemotePanel'
+import { useRemoteStore } from '../remote/remoteStore'
 
 interface CtrlProps {
   icon: IconName
@@ -184,6 +186,8 @@ function QuickSettings({ onClose }: { onClose: () => void }) {
 
 export function ControlOverlay() {
   const [quickOpen, setQuickOpen] = useState(false)
+  const [remoteOpen, setRemoteOpen] = useState(false)
+  const remoteActive = useRemoteStore((s) => s.role === 'host')
   const controlsVisible = useAppStore((s) => s.controlsVisible)
   const playing = useAppStore((s) => s.playing)
   const countingDown = useAppStore((s) => s.countingDown)
@@ -219,6 +223,11 @@ export function ControlOverlay() {
       </div>
 
       <div className="overlay__bottom">
+        {remoteOpen && (
+          <div className="quick" role="group" aria-label="Remote control pairing">
+            <RemotePanel />
+          </div>
+        )}
         {quickOpen && <QuickSettings onClose={() => setQuickOpen(false)} />}
 
         <div className="progress" aria-hidden="true">
@@ -275,6 +284,13 @@ export function ControlOverlay() {
             value={lensEnabled ? `${lensSizeMm}mm` : 'off'}
             onClick={toggleLens}
             active={lensEnabled}
+          />
+          <Ctrl
+            icon="link"
+            label="Remote"
+            value={remoteActive ? 'on' : undefined}
+            onClick={() => setRemoteOpen((v) => !v)}
+            active={remoteActive || remoteOpen}
           />
           <Ctrl icon="sliders" label="More" onClick={() => setQuickOpen((v) => !v)} active={quickOpen} />
         </div>

@@ -56,6 +56,19 @@ beam‑splitter reflection) with presets for common lenses (e.g. Sony FE 24‑70
 **vertical** reading band. Toggle it from the reader's **Lens** button or configure size, border,
 and fade in **Setup**; the default is the full‑screen reader (feature off).
 
+### Remote control (laptop ↔ phone)
+
+Drive the teleprompter on your phone from a laptop (or any second device) over the same WiFi — no
+accounts, no server. On the phone: **Library → Remote → Enable remote control** (or the **Remote**
+button in the reader) shows a 5-character code. On the laptop: open the same app, **Remote → Open
+remote control**, type the code. They connect directly over a **WebRTC data channel** (PeerJS is used
+only for the ~2-second pairing handshake, then traffic is peer-to-peer). The laptop can Play/Pause,
+Restart from top, jump Top/End, seek ±5 s, change speed & font, and pick which script to prompt; it
+mirrors the phone's live status (script, play state, progress, remaining time, WPM). Commands invoke
+the exact same store actions/scroll controller as the on-device controls, so behaviour is identical.
+PeerJS loads as its own lazy chunk, so the offline-first core is unaffected. Transport lives in
+[src/remote/](src/remote/); UI in `RemoteControl` / `RemotePanel` / `RemoteTab`.
+
 ### Mirroring & rotation (first-class)
 
 All 11 orientations from the spec are reachable from **Setup** and the in-reader quick panel:

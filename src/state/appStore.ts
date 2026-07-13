@@ -28,8 +28,8 @@ import * as presetsRepo from '../storage/presetsRepository'
 import { nextRotation } from '../utils/transform'
 import { POF_EPISODES } from '../data/pof'
 
-type View = 'library' | 'reader'
-type LibraryTab = 'scripts' | 'presets' | 'setup' | 'settings'
+type View = 'library' | 'reader' | 'remote'
+type LibraryTab = 'scripts' | 'presets' | 'setup' | 'settings' | 'remote'
 
 interface AppState {
   // --- persisted ---
@@ -104,6 +104,8 @@ interface AppState {
   // --- view ---
   openReader: (scriptId?: string) => void
   closeReader: () => void
+  openRemote: () => void
+  closeRemote: () => void
   setLibraryTab: (tab: LibraryTab) => void
   toggleGroup: (name: string) => void
   setExpandedGroups: (names: string[]) => void
@@ -367,6 +369,12 @@ export const useAppStore = create<AppState>()(
       closeReader() {
         scrollController.current.pause()
         set({ view: 'library', playing: false, countingDown: false })
+      },
+      openRemote() {
+        set({ view: 'remote' })
+      },
+      closeRemote() {
+        set({ view: 'library' })
       },
       setLibraryTab(tab) {
         set({ libraryTab: tab })

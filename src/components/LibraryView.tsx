@@ -4,11 +4,13 @@ import { ScriptEditor } from './ScriptEditor'
 import { SettingsPanel } from './SettingsPanel'
 import { PresetManager } from './PresetManager'
 import { CalibrationView } from './CalibrationView'
+import { RemoteTab } from './RemoteTab'
 
-const TABS: { id: 'scripts' | 'setup' | 'presets' | 'settings'; label: string }[] = [
+const TABS: { id: 'scripts' | 'setup' | 'presets' | 'settings' | 'remote'; label: string }[] = [
   { id: 'scripts', label: 'Scripts' },
   { id: 'setup', label: 'Setup' },
   { id: 'presets', label: 'Presets' },
+  { id: 'remote', label: 'Remote' },
   { id: 'settings', label: 'Settings' },
 ]
 
@@ -50,6 +52,8 @@ export function LibraryView() {
           <CalibrationView />
         ) : libraryTab === 'presets' ? (
           <PresetManager />
+        ) : libraryTab === 'remote' ? (
+          <RemoteTab />
         ) : (
           <SettingsPanel />
         )}

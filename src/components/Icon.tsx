@@ -27,6 +27,7 @@ export type IconName =
   | 'restore'
   | 'chevron'
   | 'more'
+  | 'link'
 
 const PATHS: Record<IconName, string> = {
   play: 'M8 5v14l11-7z',
@@ -56,6 +57,7 @@ const PATHS: Record<IconName, string> = {
   restore: 'M4 12h16v7H4z M12 9V3 M9 6l3-3 3 3',
   chevron: 'M9 6l6 6-6 6',
   more: 'M6 12a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0zm7.6 0a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0zm7.6 0a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0z',
+  link: 'M9 15l6-6M10.5 6.5l1-1a4 4 0 0 1 6 6l-1 1M13.5 17.5l-1 1a4 4 0 0 1-6-6l1-1',
 }
 
 const STROKE: Partial<Record<IconName, boolean>> = {
@@ -68,6 +70,7 @@ const STROKE: Partial<Record<IconName, boolean>> = {
   archive: true,
   restore: true,
   chevron: true,
+  link: true,
 }
 
 interface IconProps {

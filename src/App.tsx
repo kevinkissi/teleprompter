@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useAppStore } from './state/appStore'
 import { LibraryView } from './components/LibraryView'
 import { ReaderView } from './components/ReaderView'
+import { RemoteControl } from './components/RemoteControl'
 
 export default function App() {
   const hydrated = useAppStore((s) => s.hydrated)
@@ -16,5 +17,7 @@ export default function App() {
     return <div className="app-loading">Loading…</div>
   }
 
-  return view === 'reader' ? <ReaderView /> : <LibraryView />
+  if (view === 'reader') return <ReaderView />
+  if (view === 'remote') return <RemoteControl />
+  return <LibraryView />
 }
