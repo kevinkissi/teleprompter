@@ -70,6 +70,30 @@ guides lets you match the reflection through your glass before recording.
 - Word / character counts and read-time estimate. Per-script last-scroll-position memory.
 - Presenter notes (kept out of the prompter).
 
+#### Reading markup (emphasis & pauses)
+
+Script bodies support two lightweight, no-graphics reading cues that render in the prompter
+(and are ignored everywhere it matters):
+
+- `**word**` → **emphasis**: rendered bold and slightly larger so a number or punchline pops as
+  you read it.
+- A whole line wrapped in `[brackets]` → a **director cue** you read but never speak (`[beat]`, a
+  tone note like `[SERIOUS — measured, low energy]`). Rendered dim + small, and **excluded from the
+  word count** so cues never distort your WPM scroll pace.
+
+Parsing lives in [src/utils/prompterFormat.ts](src/utils/prompterFormat.ts); rendering in
+[src/components/PromptDisplay.tsx](src/components/PromptDisplay.tsx).
+
+#### Bundled series: "The Point of Failure" (180 episodes)
+
+All 180 episode scripts ship with the app, cleaned to spoken text only (no fact boxes, edit cues,
+or timecodes) and formatted with the markup above — sparse emphasis on the key numbers/punchlines
+and `[beat]` rests derived from the production book's own EDIT cues. Tap **Load series** in the
+Library to add them all at once, in filming order. The import is **idempotent and non-destructive**:
+re-tapping only adds what's missing (matched by stable id) and never overwrites your edits, notes,
+or scroll position. Data lives in [src/data/pof/](src/data/pof/) (one file per volume); the importer
+is `importSeedEpisodes` in [src/storage/scriptsRepository.ts](src/storage/scriptsRepository.ts).
+
 ### Presets
 
 Save named setups (transform + typography + scroll + colours) — e.g. *tabletop rig*, *landscape

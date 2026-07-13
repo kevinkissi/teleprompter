@@ -1,6 +1,12 @@
-/** Count words (runs of non-whitespace). */
+import { spokenText } from './prompterFormat'
+
+/**
+ * Count spoken words (runs of non-whitespace). Director cues ([...] lines) and
+ * emphasis markers (**) are stripped first so they never distort word count,
+ * read-time, or scroll pace.
+ */
 export function countWords(text: string): number {
-  const matches = text.match(/\S+/g)
+  const matches = spokenText(text).match(/\S+/g)
   return matches ? matches.length : 0
 }
 

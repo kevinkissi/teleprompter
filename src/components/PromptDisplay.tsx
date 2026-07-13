@@ -1,4 +1,4 @@
-import { useMemo, useRef, type CSSProperties } from 'react'
+import { Fragment, useMemo, useRef, type CSSProperties } from 'react'
 import { useAppStore } from '../state/appStore'
 import { useScrollEngine } from '../hooks/useScrollEngine'
 import { useWakeLock } from '../hooks/useWakeLock'
@@ -6,6 +6,7 @@ import { useGestures } from '../hooks/useGestures'
 import { useOrientation } from '../hooks/useOrientation'
 import { isRotatedQuarter, transformCss } from '../utils/transform'
 import { lensWindowSizePx } from '../utils/lens'
+import { cueText, isCueParagraph, parseInline } from '../utils/prompterFormat'
 import { Countdown } from './Countdown'
 
 const DYSLEXIA_STACK = "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', 'Verdana', sans-serif"
@@ -90,7 +91,21 @@ export function PromptDisplay() {
             {body.trim().length === 0 ? (
               <p style={{ opacity: 0.5 }}>Your script is empty. Add text in the editor.</p>
             ) : (
-              paragraphs.map((p, i) => <p key={i}>{p}</p>)
+              paragraphs.map((p, i) =>
+                isCueParagraph(p) ? (
+                  <p key={i} className="pf-cue">
+                    {cueText(p)}
+                  </p>
+                ) : (
+                  <p key={i}>
+                    {parseInline(p).map((t, j) => (
+                      <Fragment key={j}>
+                        {t.em ? <strong className="pf-em">{t.text}</strong> : t.text}
+                      </Fragment>
+                    ))}
+                  </p>
+                ),
+              )
             )}
           </div>
           <div ref={bottomRef} aria-hidden="true" />

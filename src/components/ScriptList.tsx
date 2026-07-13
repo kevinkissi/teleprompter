@@ -28,8 +28,10 @@ export function ScriptList() {
   const duplicateScript = useAppStore((s) => s.duplicateScript)
   const deleteScript = useAppStore((s) => s.deleteScript)
   const refreshScripts = useAppStore((s) => s.refreshScripts)
+  const importSeries = useAppStore((s) => s.importSeries)
 
   const [query, setQuery] = useState('')
+  const [loadingSeries, setLoadingSeries] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const filtered = useMemo(() => {
@@ -55,6 +57,20 @@ export function ScriptList() {
     if (fileRef.current) fileRef.current.value = ''
   }
 
+  async function handleLoadSeries() {
+    setLoadingSeries(true)
+    try {
+      const { added, total } = await importSeries()
+      alert(
+        added === 0
+          ? `All ${total} “Point of Failure” scripts are already in your library.`
+          : `Loaded ${added} new script${added === 1 ? '' : 's'} (of ${total} in the series so far).`,
+      )
+    } finally {
+      setLoadingSeries(false)
+    }
+  }
+
   return (
     <div>
       <div className="list-toolbar">
@@ -69,6 +85,15 @@ export function ScriptList() {
         </button>
         <button className="btn" onClick={() => fileRef.current?.click()} type="button">
           Import
+        </button>
+        <button
+          className="btn"
+          onClick={handleLoadSeries}
+          disabled={loadingSeries}
+          type="button"
+          title="Load all The Point of Failure scripts (safe to re-tap; never overwrites your edits)"
+        >
+          {loadingSeries ? 'Loading…' : 'Load series'}
         </button>
         <input
           ref={fileRef}

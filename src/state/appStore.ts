@@ -26,6 +26,7 @@ import { scrollController } from './scrollController'
 import * as scriptsRepo from '../storage/scriptsRepository'
 import * as presetsRepo from '../storage/presetsRepository'
 import { nextRotation } from '../utils/transform'
+import { POF_EPISODES } from '../data/pof'
 
 type View = 'library' | 'reader'
 type LibraryTab = 'scripts' | 'presets' | 'setup' | 'settings'
@@ -66,6 +67,7 @@ interface AppState {
   setScriptNotes: (id: string, notes: string) => Promise<void>
   duplicateScript: (id: string) => Promise<void>
   deleteScript: (id: string) => Promise<void>
+  importSeries: () => Promise<{ added: number; total: number }>
   selectScript: (id: string) => Promise<void>
   persistPosition: (id: string, positionPx: number) => Promise<void>
 
@@ -206,6 +208,12 @@ export const useAppStore = create<AppState>()(
           currentScriptId: s.currentScriptId === id ? null : s.currentScriptId,
           editingScriptId: s.editingScriptId === id ? null : s.editingScriptId,
         }))
+      },
+
+      async importSeries() {
+        const added = await scriptsRepo.importSeedEpisodes(POF_EPISODES)
+        if (added > 0) await get().refreshScripts()
+        return { added, total: POF_EPISODES.length }
       },
 
       async selectScript(id) {
