@@ -80,6 +80,10 @@ export interface Script {
   lastPositionPx: number
   estimatedReadTimeSeconds?: number
   presetId?: string
+  /** Archived ("done") scripts are hidden from the active list but kept and restorable. */
+  archived?: boolean
+  /** When it was archived (ISO); used to sort the archive bucket most-recent-first. */
+  archivedAt?: string
 }
 
 export interface AppSettings {

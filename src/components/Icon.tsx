@@ -23,6 +23,10 @@ export type IconName =
   | 'sliders'
   | 'preset'
   | 'target'
+  | 'archive'
+  | 'restore'
+  | 'chevron'
+  | 'more'
 
 const PATHS: Record<IconName, string> = {
   play: 'M8 5v14l11-7z',
@@ -48,6 +52,10 @@ const PATHS: Record<IconName, string> = {
   sliders: 'M4 8h10M18 8h2M4 16h2M10 16h10M14 6v4M6 14v4',
   preset: 'M4 5h16v4H4zM4 11h16v8H4zm3 3v2M11 14v2',
   target: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4z',
+  archive: 'M4 5h16v3H4z M6 8v11h12V8 M9 12h6',
+  restore: 'M4 12h16v7H4z M12 9V3 M9 6l3-3 3 3',
+  chevron: 'M9 6l6 6-6 6',
+  more: 'M6 12a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0zm7.6 0a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0zm7.6 0a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0z',
 }
 
 const STROKE: Partial<Record<IconName, boolean>> = {
@@ -57,6 +65,9 @@ const STROKE: Partial<Record<IconName, boolean>> = {
   list: true,
   edit: true,
   sliders: true,
+  archive: true,
+  restore: true,
+  chevron: true,
 }
 
 interface IconProps {

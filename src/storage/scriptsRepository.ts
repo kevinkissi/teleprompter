@@ -68,6 +68,15 @@ export async function deleteScript(id: string): Promise<void> {
   await db.scripts.delete(id)
 }
 
+/**
+ * Archive / unarchive a script. Does NOT bump updatedAt, so restoring a script
+ * returns it to its original place in the list; archivedAt orders the archive bucket.
+ */
+export async function setArchived(id: string, archived: boolean): Promise<Script | undefined> {
+  await db.scripts.update(id, { archived, archivedAt: archived ? nowIso() : undefined })
+  return db.scripts.get(id)
+}
+
 export async function duplicateScript(id: string): Promise<Script | undefined> {
   const existing = await db.scripts.get(id)
   if (!existing) return undefined

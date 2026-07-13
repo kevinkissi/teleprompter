@@ -45,6 +45,8 @@ interface AppState {
 
   view: View
   libraryTab: LibraryTab
+  /** Names of expanded collection groups in the script list (default: all collapsed). */
+  expandedGroups: string[]
   editingScriptId: string | null
   controlsVisible: boolean
 
@@ -67,6 +69,8 @@ interface AppState {
   setScriptNotes: (id: string, notes: string) => Promise<void>
   duplicateScript: (id: string) => Promise<void>
   deleteScript: (id: string) => Promise<void>
+  archiveScript: (id: string) => Promise<void>
+  unarchiveScript: (id: string) => Promise<void>
   importSeries: () => Promise<{ added: number; total: number }>
   selectScript: (id: string) => Promise<void>
   persistPosition: (id: string, positionPx: number) => Promise<void>
@@ -101,6 +105,8 @@ interface AppState {
   openReader: (scriptId?: string) => void
   closeReader: () => void
   setLibraryTab: (tab: LibraryTab) => void
+  toggleGroup: (name: string) => void
+  setExpandedGroups: (names: string[]) => void
   openEditor: (scriptId: string | null) => void
   showControls: () => void
   hideControls: () => void
@@ -137,6 +143,7 @@ export const useAppStore = create<AppState>()(
 
       view: 'library',
       libraryTab: 'scripts',
+      expandedGroups: [],
       editingScriptId: null,
       controlsVisible: true,
 
@@ -208,6 +215,16 @@ export const useAppStore = create<AppState>()(
           currentScriptId: s.currentScriptId === id ? null : s.currentScriptId,
           editingScriptId: s.editingScriptId === id ? null : s.editingScriptId,
         }))
+      },
+
+      async archiveScript(id) {
+        const updated = await scriptsRepo.setArchived(id, true)
+        if (updated) set((s) => ({ scripts: upsertScriptLocal(s.scripts, updated) }))
+      },
+
+      async unarchiveScript(id) {
+        const updated = await scriptsRepo.setArchived(id, false)
+        if (updated) set((s) => ({ scripts: upsertScriptLocal(s.scripts, updated) }))
       },
 
       async importSeries() {
@@ -353,6 +370,16 @@ export const useAppStore = create<AppState>()(
       },
       setLibraryTab(tab) {
         set({ libraryTab: tab })
+      },
+      toggleGroup(name) {
+        set((s) => ({
+          expandedGroups: s.expandedGroups.includes(name)
+            ? s.expandedGroups.filter((n) => n !== name)
+            : [...s.expandedGroups, name],
+        }))
+      },
+      setExpandedGroups(names) {
+        set({ expandedGroups: names })
       },
       openEditor(scriptId) {
         set({ editingScriptId: scriptId })
