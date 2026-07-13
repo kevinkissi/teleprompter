@@ -69,6 +69,12 @@ guides lets you match the reflection through your glass before recording.
 - Import `.txt` / `.md`, export `.txt` / `.md`, copy to clipboard, whitespace clean-up.
 - Word / character counts and read-time estimate. Per-script last-scroll-position memory.
 - Presenter notes (kept out of the prompter).
+- **Library management for large libraries:** scripts group into **collapsible sections** (bundled
+  series scripts by story arc via [src/data/pof/collections.ts](src/data/pof/collections.ts), your
+  own under "My scripts"), a **To film / Done** filter with live counts, and per-card **Archive /
+  Restore** (non-destructive — keeps edits and scroll position; `setArchived` in
+  [scriptsRepository.ts](src/storage/scriptsRepository.ts)). Primary card actions are Prompt / Edit /
+  Archive; Duplicate + Delete live in a "…" overflow menu.
 
 #### Reading markup (emphasis & pauses)
 
