@@ -187,12 +187,18 @@ export const useAppStore = create<AppState>()(
        * library, exactly as before. Edited scripts are never overwritten.
        */
       async syncSeriesIfStale(scripts) {
-        const seeded = POF_EPISODES.some((ep) => scripts.some((s) => s.id === ep.id))
-        if (!seeded) return
-        if ((await getMeta(SEED_VERSION_KEY)) === POF_SEED_VERSION) return
-        const result = await scriptsRepo.syncSeedEpisodes(POF_EPISODES, POF_SEED_VERSION, POF_SEED_HISTORY)
-        await setMeta(SEED_VERSION_KEY, POF_SEED_VERSION)
-        if (result.added > 0 || result.updated > 0) await get().refreshScripts()
+        try {
+          const seeded = POF_EPISODES.some((ep) => scripts.some((s) => s.id === ep.id))
+          if (!seeded) return
+          if ((await getMeta(SEED_VERSION_KEY)) === POF_SEED_VERSION) return
+          const result = await scriptsRepo.syncSeedEpisodes(POF_EPISODES, POF_SEED_VERSION, POF_SEED_HISTORY)
+          await setMeta(SEED_VERSION_KEY, POF_SEED_VERSION)
+          if (result.added > 0 || result.updated > 0) await get().refreshScripts()
+        } catch (err) {
+          // Never let a failed re-sync take the app down with it — the library
+          // still works, just on the previous numbering. "Load series" retries.
+          console.error('Episode re-sync failed; tap "Load series" to retry.', err)
+        }
       },
 
       async refreshScripts() {

@@ -21,6 +21,9 @@ export default defineConfig({
         // Never let the network block the reading screen. If offline, serve cached shell.
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
+        // Take over any page still open the moment this worker activates, so a
+        // handover never needs a second launch to show the new build.
+        clientsClaim: true,
       },
       manifest: {
         name: 'Teleprompter',

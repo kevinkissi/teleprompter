@@ -17,12 +17,25 @@ let updateReady = false
 const listeners = new Set<Listener>()
 let updateServiceWorker: ((reloadPage?: boolean) => Promise<void>) | null = null
 
+/** How often a running app re-checks for a new build. */
+const UPDATE_CHECK_MS = 30 * 60 * 1000
+
 export function initServiceWorker(): void {
   updateServiceWorker = registerSW({
     immediate: true,
     onNeedRefresh() {
       updateReady = true
       for (const l of listeners) l(true)
+    },
+    onRegisteredSW(_swUrl, registration) {
+      if (!registration) return
+      // A phone can keep this app alive for days. Without a poll the only update
+      // check is a cold start, so a deploy can sit unnoticed indefinitely.
+      const check = () => {
+        if (document.visibilityState === 'visible') void registration.update()
+      }
+      setInterval(check, UPDATE_CHECK_MS)
+      document.addEventListener('visibilitychange', check)
     },
   })
 }
