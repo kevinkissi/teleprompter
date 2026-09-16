@@ -259,7 +259,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 102 · The Stock Price Too Big for the Computer',
     body: `[EP 102 · ~60s · fun, nerdy delight]
 
-One company's stock price got so high, the exchange's computers **could not count it anymore**. This is The Point of Failure, episode one oh two.
+One company's stock price got so high, the exchange's computers **could not count it anymore**. This is The Point of Failure, episode one hundred two.
 
 Berkshire Hathaway. Warren Buffett's company famously never split its Class A shares. So while normal stocks trade at fifty or two hundred dollars, one share of Berkshire costs as much as a house. By 2021 — over four hundred twenty thousand dollars. And climbing.
 
@@ -279,7 +279,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 111 · The Typo That Stopped a Billion Dollar Heist',
     body: `[EP 111 · ~90s · true crime]
 
-Hackers were hours away from stealing nearly a billion dollars from a nation's central bank. They were stopped by **a spelling mistake**. This is The Point of Failure, episode one eleven.
+Hackers were hours away from stealing nearly a billion dollars from a nation's central bank. They were stopped by **a spelling mistake**. This is The Point of Failure, episode one hundred eleven.
 
 February 2016. Attackers, later attributed by US authorities to North Korea's Lazarus Group, are deep inside Bangladesh Bank. They have the keys to SWIFT, the messaging system banks use to move money across the world. And they use it properly — authenticated, formatted, legitimate looking orders, moving Bangladesh's money out of its account at the New York Fed.
 
@@ -301,7 +301,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 117 · Down on Payday',
     body: `[EP 117 · ~75s · grounded, consumer side]
 
-A major bank went down on the one day of the month everyone gets paid... which was also **tax deadline day**. This is The Point of Failure, episode one seventeen.
+A major bank went down on the one day of the month everyone gets paid... which was also **tax deadline day**. This is The Point of Failure, episode one hundred seventeen.
 
 January 31st, 2025. Last working day of the month. Millions of salaries land today. It is also the deadline for the UK's self assessment tax returns. If you were going to pick the single worst day for a bank's systems to fail, a committee could not have chosen better.
 
@@ -321,7 +321,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 125 · The Bank the Regulator Put in Timeout',
     body: `[EP 125 · ~75s · consequences story]
 
-A bank had so many outages in one year, the regulator ordered it to stop changing its own systems. And **froze its growth**. This is The Point of Failure, episode one twenty five.
+A bank had so many outages in one year, the regulator ordered it to stop changing its own systems. And **froze its growth**. This is The Point of Failure, episode one hundred twenty five.
 
 DBS. Singapore's biggest bank, and for years one of the most digitally admired banks on earth. Awards, keynotes, the model everyone cited. Then 2023 happens. March — digital banking down for around a day. October — down again, this time because a cooling upgrade fails at a third party data center, taking DBS and even Citibank services in Singapore with it.
 
@@ -341,7 +341,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 131 · The Day the Fed's Own Pipes Burst",
     body: `[EP 131 · ~60s · institutional awe]
 
-The system that moves **three trillion dollars a day** between America's banks went down. The cause was the Fed itself. This is The Point of Failure, episode one thirty one.
+The system that moves **three trillion dollars a day** between America's banks went down. The cause was the Fed itself. This is The Point of Failure, episode one hundred thirty one.
 
 Under every payment you have ever made sits a hidden staircase. Your app talks to your bank. Your bank talks to other banks. And at the very bottom step, banks settle with each other through the Federal Reserve, on a system called Fedwire. It is the floor. Nobody thinks about the floor.
 
@@ -359,7 +359,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 138 · Europe's Money Went Quiet for 10 Hours",
     body: `[EP 138 · ~60s · institutional, cool]
 
-The system underneath the euro itself stopped for ten hours. Most Europeans never knew. This is The Point of Failure, episode one thirty eight.
+The system underneath the euro itself stopped for ten hours. Most Europeans never knew. This is The Point of Failure, episode one hundred thirty eight.
 
 If you watched my Fedwire episode, you know the floor — the settlement layer where banks pay each other for real. Europe's floor is called TARGET2, run by the European Central Bank. **Nearly two trillion euros** crosses it every day.
 
@@ -375,7 +375,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 148 · Moving Day, and the Money Won't Move",
     body: `[EP 148 · ~60s · human stakes, tight]
 
-Across Britain, families sat in loaded moving vans outside houses they could not enter. Because one payment system was down. This is The Point of Failure, episode one forty eight.
+Across Britain, families sat in loaded moving vans outside houses they could not enter. Because one payment system was down. This is The Point of Failure, episode one hundred forty eight.
 
 In the UK, when you buy a home, the money moves through CHAPS, the high value payment system settling over the Bank of England's core ledger. On completion day, your funds must land before you get the keys. **No transfer, no keys**.
 
@@ -393,7 +393,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 152 · Down on the Biggest Trading Day of the Year',
     body: `[EP 152 · ~75s · momentum story]
 
-Millions of traders watched one of the biggest market days in history through a window they could not open. This is The Point of Failure, episode one fifty two.
+Millions of traders watched one of the biggest market days in history through a window they could not open. This is The Point of Failure, episode one hundred fifty two.
 
 Early COVID. Markets are moving like weather systems. And on March 2nd, the Dow rips its biggest single day point gain ever recorded to that date. Every retail trader in America wants in. And on Robinhood, the app that brought them all here... nothing. Down. **All day**.
 
@@ -413,7 +413,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 159 · The Exchange That Lost Its Phone Lines',
     body: `[EP 159 · ~60s · compact drama]
 
-A stock exchange's trading engines were perfectly healthy. It **shut down anyway**, for four hours. That choice is the story. This is The Point of Failure, episode one fifty nine.
+A stock exchange's trading engines were perfectly healthy. It **shut down anyway**, for four hours. That choice is the story. This is The Point of Failure, episode one hundred fifty nine.
 
 Mumbai. The National Stock Exchange, India's largest. Mid morning, its telecom links, from multiple providers, fail. And those links feed something most people never think about — the online risk management system. The referee that watches every trade for danger in real time.
 
@@ -431,7 +431,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 160 · Cards Declined Across a Continent',
     body: `[EP 160 · ~75s · everyday apocalypse]
 
-One Friday evening, millions of people across Europe tapped their card... and got declined. **All of them.** This is The Point of Failure, episode one sixty.
+One Friday evening, millions of people across Europe tapped their card... and got declined. **All of them.** This is The Point of Failure, episode one hundred sixty.
 
 June 1st, 2018. Friday, shops full, pubs filling. Inside one of Visa's European data centers, a hardware switch, a box that directs the flow of transactions, partially fails. Keep that word. **Partially.**
 
@@ -451,7 +451,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 165 · The Biggest Bank in the World, Reduced to a USB Stick',
     body: `[EP 165 · ~90s · cinematic, absurd]
 
-The largest bank on earth got locked out of the US Treasury market. So it settled billion dollar trades... by walking a USB stick across Manhattan. This is The Point of Failure, episode one sixty five.
+The largest bank on earth got locked out of the US Treasury market. So it settled billion dollar trades... by walking a USB stick across Manhattan. This is The Point of Failure, episode one hundred sixty five.
 
 November 2023. ICBC — by assets, the biggest bank in the world. Its US arm clears trades in the deepest, most important market that exists, US government debt. And one Wednesday, ransomware, attributed to the LockBit gang, detonates inside it.
 

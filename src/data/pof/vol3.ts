@@ -215,7 +215,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 104 · The 149 Hour Rule',
     body: `[EP 104 · ~45s · compact companion piece]
 
-Remember the plane you had to reboot every 248 days? Its biggest rival had one too. This is The Point of Failure, episode one oh four.
+Remember the plane you had to reboot every 248 days? Its biggest rival had one too. This is The Point of Failure, episode one hundred four.
 
 2019. European regulators publish a directive on the Airbus A350 — keep the aircraft continuously powered past 149 hours, and certain avionics systems can degrade, up to partial or total loss of function. The interim rule — restart the plane before hour 149. A software fix later closed it for good. Caught by analysis. No incident. **Same story, different badge.**
 
@@ -229,7 +229,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 113 · The Chip That Couldn't Divide",
     body: `[EP 113 · ~90s · corporate drama]
 
-The world's most famous computer chip couldn't reliably divide. The manufacturer knew. **It decided you didn't need to.** This is The Point of Failure, episode one thirteen.
+The world's most famous computer chip couldn't reliably divide. The manufacturer knew. **It decided you didn't need to.** This is The Point of Failure, episode one hundred thirteen.
 
 1994. The Pentium is Intel's crown jewel, backed by one of the biggest consumer ad campaigns silicon has ever had. Meanwhile, in Virginia, a math professor named Thomas Nicely is hunting prime numbers, billions of divisions, and his results keep coming back... slightly wrong. He checks his code for months. His code is fine. The chip is not.
 
@@ -251,7 +251,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 120 · The Index That Rounded Itself to Death',
     body: `[EP 120 · ~75s · detective story]
 
-A stock index lost half its value in two years... while its market was doing fine. The money never went anywhere. **The math did.** This is The Point of Failure, episode one twenty.
+A stock index lost half its value in two years... while its market was doing fine. The money never went anywhere. **The math did.** This is The Point of Failure, episode one hundred twenty.
 
 Vancouver, 1982. The stock exchange launches a shiny new index at a clean 1,000 points. Over the next twenty two months it bleeds. 900. 700. 600. By late 1983 it is around 524, and everyone is asking what is wrong with Vancouver's market. Companies fine. Trades normal. The sickness is invisible.
 
@@ -269,7 +269,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 129 · The Day Every Zune Froze',
     body: `[EP 129 · ~60s · comedy with a real lesson]
 
-Every single one of these devices, everywhere on earth, froze on the same morning. The official fix — **wait until tomorrow**. This is The Point of Failure, episode one twenty nine.
+Every single one of these devices, everywhere on earth, froze on the same morning. The official fix — **wait until tomorrow**. This is The Point of Failure, episode one hundred twenty nine.
 
 The Zune. Microsoft's iPod rival. On New Year's Eve 2008, owners wake up, hit the power button, and get a frozen loading screen. All of them. Worldwide. Same day. Forums melt down. Is it a virus? A shutdown signal? Sabotage?
 
@@ -289,7 +289,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 137 · The Email Servers That Refused to Enter 2022',
     body: `[EP 137 · ~60s · brisk, knowing]
 
-At the stroke of midnight, New Year 2022, email servers around the world stopped. The killer was a number you already know. This is The Point of Failure, episode one thirty seven.
+At the stroke of midnight, New Year 2022, email servers around the world stopped. The killer was a number you already know. This is The Point of Failure, episode one hundred thirty seven.
 
 January 1st, 2022. Company email everywhere just... queues. Nothing delivered. IT admins abandon New Year's brunch to find Microsoft Exchange servers down, and the culprit is the malware scanner, of all things, the guard at the door.
 
@@ -305,7 +305,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 140 · The Calendar Bug That Comes Back Every 19.7 Years',
     body: `[EP 140 · ~60s · eerie, cyclical]
 
-There is a bug with a schedule. It returns roughly every twenty years, on a date everyone can look up. And it still catches us. This is The Point of Failure, episode one forty.
+There is a bug with a schedule. It returns roughly every twenty years, on a date everyone can look up. And it still catches us. This is The Point of Failure, episode one hundred forty.
 
 GPS satellites broadcast time, and time is how your position gets computed. In the legacy signal, the week number travels in a 10 bit field. Ten bits can count to 1,023. So every 1,024 weeks, about 19.7 years, the counter fills up... and rolls back to zero. To a receiver with lazy date logic, the world just **snapped twenty years into the past**.
 
@@ -323,7 +323,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 154 · The Bug We Can All See Coming',
     body: `[EP 154 · ~75s · prophetic]
 
-Every story on this show already happened. This one has **a date in the future** — January 19th, 2038, 3:14 AM. This is The Point of Failure, episode one fifty four.
+Every story on this show already happened. This one has **a date in the future** — January 19th, 2038, 3:14 AM. This is The Point of Failure, episode one hundred fifty four.
 
 Most computers count time the same way — seconds ticking up since midnight, January 1st, 1970. For decades that count lived in, you know the box by now, a signed 32 bit integer. Ceiling — **2,147,483,647** seconds. Do the math forward from 1970 and you land on an exact moment — 03:14:07 universal time, January 19th, 2038. One second later, the counter wraps... and the date reads December 1901.
 
@@ -343,7 +343,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 162 · One Extra Second',
     body: `[EP 162 · ~75s · precision chaos]
 
-The world's timekeepers added one extra second to the clock. Websites crashed and planes were delayed. **Over one second.** This is The Point of Failure, episode one sixty two.
+The world's timekeepers added one extra second to the clock. Websites crashed and planes were delayed. **Over one second.** This is The Point of Failure, episode one hundred sixty two.
 
 Here is a fact most people never learn — the Earth's spin is not perfectly steady, but atomic clocks are. So every few years, the official timekeepers insert a leap second — one minute, that one night, contains 61 seconds. The clock legally reads **23:59:60**. A time that, to a lot of software, cannot exist.
 
@@ -361,7 +361,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 169 · The Spacecraft Killed by Its Own Wristwatch',
     body: `[EP 169 · ~60s · elegy, compact]
 
-This spacecraft survived shooting a hole in a comet. It was **killed by its own clock**. This is The Point of Failure, episode one sixty nine.
+This spacecraft survived shooting a hole in a comet. It was **killed by its own clock**. This is The Point of Failure, episode one hundred sixty nine.
 
 Deep Impact. In 2005 it did something absurd and wonderful — fired an 800 pound impactor into a comet at ten kilometers a second, so scientists could read the debris. Mission accomplished, it kept flying for years of bonus science — more comets, distant planets. A veteran.
 

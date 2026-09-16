@@ -57,7 +57,7 @@ if (!oldDir) {
 
 const { POF_EPISODES: oldEpisodes } = await bundle(path.join(oldDir, 'index.ts'), 'old.mjs')
 const { POF_EPISODES: newEpisodes, POF_SEED_VERSION, POF_SEED_HISTORY } = await bundle(path.join(REPO, 'src/data/pof/index.ts'), 'new.mjs')
-const { planSeedSync, seededAt, fingerprint } = await bundle(path.join(REPO, 'src/storage/seedSync.ts'), 'sync.mjs')
+const { planSeedSync, seededAt, fingerprint, withoutNumbering } = await bundle(path.join(REPO, 'src/storage/seedSync.ts'), 'sync.mjs')
 
 console.log(`old bundle: ${oldEpisodes.length} episodes · new bundle: ${newEpisodes.length} · seed ${POF_SEED_VERSION}\n`)
 
@@ -76,6 +76,24 @@ function legacyLibrary() {
   }
   return m
 }
+
+// ------------------------------------------------ 0. the numbering normalizer
+// withoutNumbering has to recognise the numbering the generator writes, or a
+// renumbering is a one-way door and every legacy script looks edited. It broke
+// once already when "one hundred seventy six" grew past a word-count pattern.
+console.log('the app can strip the numbering the generator writes:')
+const unstripped = newEpisodes.filter((ep) => {
+  const bare = withoutNumbering(ep.body)
+  // A letter after "episode" means a number word survived; punctuation is the
+  // expected remainder once the number is stripped.
+  return /The Point of Failure\s*[,:\u2014-]?\s*episode\s*[a-z]/i.test(bare)
+})
+check(unstripped.length === 0, 'every spoken episode number normalises away', unstripped.slice(0, 3).map((e) => e.id).join(', '))
+const prosePreserved = newEpisodes.filter((ep) => ep.body.includes('episode one of this show'))
+check(
+  prosePreserved.every((ep) => withoutNumbering(ep.body).includes('episode one of this show')),
+  `prose "episode one of this show" is not eaten (${prosePreserved.length} script(s))`,
+)
 
 // ------------------------------------------------- 0. the two fingerprinters
 // scripts/sync-episodes.mjs writes history.ts with its own copy of FNV-1a. If it

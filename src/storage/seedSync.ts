@@ -23,11 +23,24 @@ export function fingerprint(s: string): string {
  * across a renumbering: the "EP 12 · " title prefix, the "[EP 12 · …]" opening
  * cue, and the spoken "…, episode twelve." in the first line.
  */
+/**
+ * The words an episode number can be spelled with. Matching these rather than
+ * "up to N words" is what keeps the pattern from eating prose: the corpus has
+ * "...grounded the planet, episode one of this show", and a word-counting
+ * pattern would swallow it. Kept in step with scripts/sync-episodes.mjs.
+ */
+const NUMBER_WORD =
+  '(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|oh)'
+const SPOKEN_NUMBER = new RegExp(
+  `(The Point of Failure\\s*[,:\u2014-]?\\s*episode\\s*)(?:\\[N\\]|${NUMBER_WORD}(?:\\s+${NUMBER_WORD})*)(?=\\s*[.,])`,
+  'gi',
+)
+
 export function withoutNumbering(s: string): string {
   return s
     .replace(/^\[(?:EP\s*\d+|#\d+)\s*·\s*/, '[')
     .replace(/^(?:EP\s*\d+|#\d+)\s*·\s*/, '')
-    .replace(/(The Point of Failure,\s*episode\s*)(?:\[N\]|[a-z]+(?:\s+[a-z]+){0,2})(?=\s*[.,])/gi, '$1')
+    .replace(SPOKEN_NUMBER, '$1')
     .replace(/\s+/g, ' ')
     .trim()
 }

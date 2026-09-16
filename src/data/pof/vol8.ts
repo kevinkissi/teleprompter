@@ -267,7 +267,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 101 · The Bug in Everything',
     body: `[EP 101 · ~75s · ubiquity epic]
 
-The most dangerous bug of the decade was in software you have never heard of, running inside almost everything you have. This is The Point of Failure, episode one oh one.
+The most dangerous bug of the decade was in software you have never heard of, running inside almost everything you have. This is The Point of Failure, episode one hundred one.
 
 December 2021. Log4j is a free Java library that does the least glamorous job in software — writing log lines. Because it is good and free, it is everywhere — inside enterprise apps, cloud platforms, games, appliances — embedded so deep that most companies running it did not know they were. Maintained, in the pattern this arc keeps finding, by a handful of volunteers.
 
@@ -287,7 +287,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 112 · The Card That Poisoned the Network',
     body: `[EP 112 · ~75s · technical mystery]
 
-No hacker. No update. No mistake at a keyboard. One physical card went bad — and its gibberish was polite enough that an entire national network passed it along. This is The Point of Failure, episode one twelve.
+No hacker. No update. No mistake at a keyboard. One physical card went bad — and its gibberish was polite enough that an entire national network passed it along. This is The Point of Failure, episode one hundred twelve.
 
 December 27th, 2018. In a node near Denver, a network management card — a small piece of hardware whose job is housekeeping chatter — malfunctions. It begins generating malformed packets. Gibberish. But **gibberish with excellent manners** — valid checksums, a broadcast-style address — paperwork so correct that the equipment receiving it does not discard it. It forwards it. To everyone.
 
@@ -305,7 +305,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 122 · Eleven Lines',
     body: `[EP 122 · ~60s · absurdist parable]
 
-Eleven lines of code disappeared from the internet — and build systems everywhere started failing within minutes. **Eleven. Lines.** This is The Point of Failure, episode one twenty two.
+Eleven lines of code disappeared from the internet — and build systems everywhere started failing within minutes. **Eleven. Lines.** This is The Point of Failure, episode one hundred twenty two.
 
 March 2016. A developer named Azer Koçulu, after a package naming dispute with the JavaScript registry npm, does something entirely within his rights — he takes his toys and goes home — unpublishing all his packages. Among them — left-pad. Eleven lines. It pads the left side of a string. That is all it does. You could write it during a yawn.
 
@@ -323,7 +323,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 127 · SOS Coast to Coast',
     body: `[EP 127 · ~60s · recent, compact]
 
-Phones across America dropped to two letters — **SOS**. Again. Third national carrier failure of its kind in three years. This is The Point of Failure, episode one twenty seven.
+Phones across America dropped to two letters — **SOS**. Again. Third national carrier failure of its kind in three years. This is The Point of Failure, episode one hundred twenty seven.
 
 Early 2026. Verizon customers coast to coast watch their bars vanish and the SOS indicator appear — the modern icon of a very specific failure. SOS mode means the towers are fine — your phone can literally see other networks and will pass an emergency call through them. What is broken is recognition — the core systems that answer the network's oldest question — who are you, and are you one of ours? Details of this event per the reporting of that week — but that symptom tells you where the wound is.
 
@@ -341,7 +341,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 136 · The First Worm',
     body: `[EP 136 · ~75s · origin legend]
 
-The first great internet security disaster was a measurement experiment — with one untested number inside it. This is The Point of Failure, episode one thirty six.
+The first great internet security disaster was a measurement experiment — with one untested number inside it. This is The Point of Failure, episode one hundred thirty six.
 
 1988. The internet is a village — some sixty thousand computers, academic, trusting, mostly unlocked doors. A Cornell graduate student, Robert Tappan Morris, writes a program to explore it — self replicating, hopping machine to machine through known weak points — a debug door here, an overflow there, borrowed passwords — not to destroy anything — per the record, to measure. To count the village.
 
@@ -361,7 +361,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 146 · The Love Letter',
     body: `[EP 146 · ~75s · global nostalgia]
 
-The subject line said I LOVE YOU. Tens of millions of people opened it. By the weekend, the Pentagon had turned off its email. This is The Point of Failure, episode one forty six.
+The subject line said I LOVE YOU. Tens of millions of people opened it. By the weekend, the Pentagon had turned off its email. This is The Point of Failure, episode one hundred forty six.
 
 May 4th, 2000. An email lands — subject — ILOVEYOU — attachment — a love letter, apparently a harmless text file. It is not a text file. It is a script — its true nature hidden by a default Windows setting that politely concealed file extensions — a default that turned disguise into a feature. One click, and it overwrites your files — photos, documents — then mails itself to everyone in your address book. Which is the genius and the horror — the next victim receives it from someone they know. The worm did not spread through computers. It spread through **trust**.
 
@@ -379,7 +379,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 147 · Thirteen Hours Without Triple Zero',
     body: `[SERIOUS — measured, low energy, no smile]
 
-This episode is about thirteen hours during which, for part of a country, the emergency number did not work — and no alarm inside the company noticed. This is The Point of Failure, episode one forty seven.
+This episode is about thirteen hours during which, for part of a country, the emergency number did not work — and no alarm inside the company noticed. This is The Point of Failure, episode one hundred forty seven.
 
 September 18th, 2025. Australia. Overnight, a firewall upgrade proceeds on the Optus network — security infrastructure, routine in intent. Something in that change — per the statements of the time, subject to the investigations that followed — breaks the path that carries triple zero calls for customers across South Australia, Western Australia and the Northern Territory. Not all calls. The emergency ones. The calls that exist for the worst moment of someone's life.
 
@@ -401,7 +401,7 @@ Every failure has a story. Every story was preventable. I'm Kevin.`,
     title: 'EP 158 · One Misconfigured Firewall',
     body: `[EP 158 · ~75s · cloud era forensic]
 
-Nobody broke the cloud. Nobody broke the encryption. One firewall was configured to be helpful in exactly the wrong direction — and **a hundred six million** people's applications walked out. This is The Point of Failure, episode one fifty eight.
+Nobody broke the cloud. Nobody broke the encryption. One firewall was configured to be helpful in exactly the wrong direction — and **a hundred six million** people's applications walked out. This is The Point of Failure, episode one hundred fifty eight.
 
 2019. Capital One is one of banking's proudest cloud pioneers — sophisticated, modern, all in. In front of its cloud applications stands a web application firewall — a guard whose job is inspecting traffic. But this guard is misconfigured with a strange courtesy — it can be induced to relay requests onward — including inward — to addresses inside the cloud environment itself.
 
@@ -421,7 +421,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 170 · The Password Manager's Bad Year",
     body: `[EP 170 · ~90s · layered forensic]
 
-The company guarding millions of people's passwords was breached — through the home computer of one engineer — and the thieves left carrying the vaults themselves. This is The Point of Failure, episode one seventy.
+The company guarding millions of people's passwords was breached — through the home computer of one engineer — and the thieves left carrying the vaults themselves. This is The Point of Failure, episode one hundred seventy.
 
 2022. LastPass — tens of millions of users storing every password they own inside encrypted vaults. In August, breach number one — a developer environment compromised, source code and technical details taken. Assessed, disclosed, described as contained. But information is a lockpick set — and the attackers had just learned exactly how the building was constructed... and who held which keys.
 
@@ -441,7 +441,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 171 · When the Town Square Goes Quiet',
     body: `[EP 171 · ~60s · recent, reflective]
 
-The place where the internet goes to ask is it down for everyone... went down for everyone. This is The Point of Failure, episode one seventy one.
+The place where the internet goes to ask is it down for everyone... went down for everyone. This is The Point of Failure, episode one hundred seventy one.
 
 January 2026. X stops loading. Feeds hang, posts fail — details of that day per the reports of that week. And within seconds, hundreds of millions of thumbs perform the same doomed ritual — opening X... to check why X is down. The reflex is the story. Somewhere in the last fifteen years, the real-time feed became **the internet's smoke detector** — the first place we look when anything anywhere breaks — banks, clouds, airlines, all the stories on this show. The detector going quiet is its own special genre of confusion.
 

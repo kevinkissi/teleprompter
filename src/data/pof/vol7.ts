@@ -273,7 +273,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 105 · The Algorithm That Helped Collapse a Government',
     body: `[SERIOUS — measured, low energy, no smile]
 
-Tens of thousands of families were branded fraudsters by their own government's systems — some for the crime of a missing signature — and the scandal brought the government down. This is The Point of Failure, episode one oh five.
+Tens of thousands of families were branded fraudsters by their own government's systems — some for the crime of a missing signature — and the scandal brought the government down. This is The Point of Failure, episode one hundred five.
 
 The Netherlands, through the 2010s. Childcare benefits flow to working parents — and the tax authority, under pressure to crush fraud, builds an enforcement machine — risk profiles selecting who gets scrutinized — in later years a self learning risk model among the tools — and a doctrine with no mercy in it — any irregularity, even a form error, could mean repaying everything. Years of benefits. Tens of thousands of euros. At once.
 
@@ -295,7 +295,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 107 · The Council Bankrupted With a Broken Ledger',
     body: `[EP 107 · ~75s · civic sober]
 
-Europe's biggest local government declared itself effectively bankrupt — facing enormous liabilities, with a finance system so broken it could not even close its own books. This is The Point of Failure, episode one oh seven.
+Europe's biggest local government declared itself effectively bankrupt — facing enormous liabilities, with a finance system so broken it could not even close its own books. This is The Point of Failure, episode one hundred seven.
 
 Birmingham, England — a council serving over a million people, the largest local authority in Europe. In April 2022 it switches its finances from SAP to Oracle — heavily customized, reports later found, against advice, and thin on testing. The go live fails where finance systems must never fail — reconciling the bank accounts, producing accounts an auditor can sign. The budgeted **nineteen million pound** project swells toward **a hundred thirty million** just to repair.
 
@@ -315,7 +315,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 115 · 93 Percent Wrong',
     body: `[EP 115 · ~75s · quiet outrage, controlled]
 
-A government computer accused tens of thousands of workers of fraud, seized their wages and tax refunds — and when humans finally checked, **ninety three percent** of the automated accusations were wrong. This is The Point of Failure, episode one fifteen.
+A government computer accused tens of thousands of workers of fraud, seized their wages and tax refunds — and when humans finally checked, **ninety three percent** of the automated accusations were wrong. This is The Point of Failure, episode one hundred fifteen.
 
 Michigan, 2013. The state's unemployment agency switches on MiDAS — a modern system for a battered process — and hands it a power no software had held there before — deciding, alone, that a claimant committed fraud. No investigator. No interview. A data mismatch — an employer's paperwork quirk, a date misaligned — and the machine files its verdict — fraud — with penalties up to four times the money, enforcement included.
 
@@ -335,7 +335,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 118 · The Morning McDonald's Closed",
     body: `[EP 118 · ~60s · global snapshot]
 
-One morning, on three continents, you could not buy a Big Mac. Not a hack. A configuration change. This is The Point of Failure, episode one eighteen.
+One morning, on three continents, you could not buy a Big Mac. Not a hack. A configuration change. This is The Point of Failure, episode one hundred eighteen.
 
 March 15th, 2024. Reports cascade with the sunrise — Japan first — stores nationwide unable to take orders — then Australia, New Zealand, the UK. Kiosks dark, apps failing, tills frozen. Some stores hand write orders for cash — many simply lock the doors. McDonald's says it quickly and clearly — **not a cyberattack** — a configuration change made by a third party provider had rippled through its systems.
 
@@ -353,7 +353,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 126 · The System That Never Shipped',
     body: `[EP 126 · ~60s · autopsy, instructive]
 
-**A hundred seventy million dollars.** Four years. Amount of working software delivered — effectively zero. This is The Point of Failure, episode one twenty six.
+**A hundred seventy million dollars.** Four years. Amount of working software delivered — effectively zero. This is The Point of Failure, episode one hundred twenty six.
 
 After September 11th, the FBI's paper based case management became a national urgency — agents literally faxing leads. The fix — Virtual Case File — a full replacement, one big delivery, contractor built. Four years later, in 2005, the delivered system was judged unusable and the whole thing was abandoned. Not late. Not buggy. Gone. The most instructive failure in government software — because nothing exotic failed. No hack, no outage, no bad chip. **Just method.**
 
@@ -369,7 +369,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 132 · Free Coffee Day',
     body: `[EP 132 · ~60s · charming, pointed]
 
-One evening in 2015, Starbucks stores across an entire continent faced a choice — close early... or give the coffee away. This is The Point of Failure, episode one thirty two.
+One evening in 2015, Starbucks stores across an entire continent faced a choice — close early... or give the coffee away. This is The Point of Failure, episode one hundred thirty two.
 
 April 24th, 2015. Late afternoon, and across the US and Canada, Starbucks registers die — thousands of stores, at once. The culprit, per the company — a failure during the daily system refresh — the routine maintenance that keeps retail systems tidy. Not an attack. Not a surge. The **housekeeping broke the house**.
 
@@ -387,7 +387,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 141 · Down on Tax Day',
     body: `[EP 141 · ~60s · deadline irony]
 
-On the one day the law requires every American to pay, the payment system went down. The deadline itself had to move. This is The Point of Failure, episode one forty one.
+On the one day the law requires every American to pay, the payment system went down. The deadline itself had to move. This is The Point of Failure, episode one hundred forty one.
 
 April 17th, 2018. Tax Day — the most predictable load spike in American civic life, written into statute, marked on every calendar in the nation. Millions wait — as humans do — for the last day. And that morning, the IRS's payment and filing systems fail — Direct Pay down, e-file processing choking — for most of the business day, while procrastinating America refreshes in disbelief.
 
@@ -405,7 +405,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 145 · The Vendor You'd Never Heard Of",
     body: `[EP 145 · ~60s · hidden layer, seasonal]
 
-Starbucks baristas were scheduled on paper. British supermarkets scrambled their warehouses. Same week, same cause — a company you have never heard of got encrypted. This is The Point of Failure, episode one forty five.
+Starbucks baristas were scheduled on paper. British supermarkets scrambled their warehouses. Same week, same cause — a company you have never heard of got encrypted. This is The Point of Failure, episode one hundred forty five.
 
 November 2024, the week before Thanksgiving — peak season's front porch. Ransomware — a gang called Termite claimed it — detonates inside Blue Yonder, a supply chain software provider whose systems schedule workers, run warehouses and forecast demand for thousands of enterprises. You have never installed their app. Your coffee and your groceries run through them anyway.
 
@@ -423,7 +423,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 153 · One Front Door for a Nation',
     body: `[EP 153 · ~75s · continental stakes]
 
-Hackers flooded one website — and a nation's visas, licenses, IDs and payments all stumbled together. This is The Point of Failure, episode one fifty three.
+Hackers flooded one website — and a nation's visas, licenses, IDs and payments all stumbled together. This is The Point of Failure, episode one hundred fifty three.
 
 Kenya, July 2023. Understand first what Kenya built, because it is genuinely ahead of most of the world — eCitizen — one portal, one login, over five thousand government services — the visa, the business license, the ID, the payment — consolidated where citizens of richer countries still queue at seven buildings. Digital government, done ambitiously. And then the flip side of one door arrived, knocking very hard.
 
@@ -441,7 +441,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 156 · 15,000 Dealerships on Paper',
     body: `[EP 156 · ~90s · sector shutdown epic]
 
-For two weeks, most of America's car dealerships ran on pens, paper, and memory — because one software company was being held hostage. This is The Point of Failure, episode one fifty six.
+For two weeks, most of America's car dealerships ran on pens, paper, and memory — because one software company was being held hostage. This is The Point of Failure, episode one hundred fifty six.
 
 You have probably never heard of CDK Global, and if you have bought a car in America, it processed you. Its dealer management system is the operational heart of roughly **fifteen thousand dealerships** — every deal, every financing application, every service ticket, parts order, and payroll run. One platform. Most of a sector. June 2024 — ransomware, attributed in reporting to a group called BlackSuit, takes it down — and as restoration begins... a second incident hits, and the lights go back out.
 
@@ -461,7 +461,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 166 · Checkout Down on Cyber Monday',
     body: `[EP 166 · ~60s · recent, compact]
 
-On the biggest online shopping day of the year, thousands of store owners watched their checkout stop working — and there was nothing any of them could do. This is The Point of Failure, episode one sixty six.
+On the biggest online shopping day of the year, thousands of store owners watched their checkout stop working — and there was nothing any of them could do. This is The Point of Failure, episode one hundred sixty six.
 
 Cyber Monday. The internet's single most concentrated commercial window — for millions of small merchants, hours that fund whole quarters. And in 2025, mid surge, Shopify — the platform their stores live on — stumbled. Scale and duration per the reports of that week — but for this episode, the exact minutes matter less than what those minutes contained — peak revenue, ticking past locked doors.
 
@@ -479,7 +479,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 167 · 'System Offline'",
     body: `[EP 167 · ~75s · chronic condition, human]
 
-Everywhere else in this series, downtime is an event. In this story, it is the weather. This is The Point of Failure, episode one sixty seven.
+Everywhere else in this series, downtime is an event. In this story, it is the weather. This is The Point of Failure, episode one hundred sixty seven.
 
 South Africa. The Department of Home Affairs issues the documents that gate a life — the ID that opens a bank account, the birth certificate that enrolls a child, the passport that permits a job abroad. And for years — across administrations, documented by auditors, ministers and a weary press — its systems have gone down so routinely that the offline sign is a fixture. Not a crisis. A condition.
 

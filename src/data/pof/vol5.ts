@@ -217,7 +217,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 108 · The Regular Expression That Ate Every CPU',
     body: `[EP 108 · ~75s · nerd legend]
 
-One line of pattern matching, one search rule, drove every processor in a global network to **one hundred percent** at the same moment. This is The Point of Failure, episode one oh eight.
+One line of pattern matching, one search rule, drove every processor in a global network to **one hundred percent** at the same moment. This is The Point of Failure, episode one hundred eight.
 
 July 2019. Cloudflare stands in front of millions of websites, and part of its job is a firewall that inspects requests using pattern matching rules — think of each rule as a search instruction — does this request look like an attack? That day, engineers shipped a new rule. And rules like these deployed globally, immediately, on purpose — when you are blocking attacks, staging for days is its own risk.
 
@@ -237,7 +237,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 116 · The File That Grew Too Big for the Internet',
     body: `[EP 116 · ~90s · recent epic, precise]
 
-The internet flickered, down, up, down again, like something was breathing on the power switch. The cause was a file that had quietly **doubled in size**. This is The Point of Failure, episode one sixteen.
+The internet flickered, down, up, down again, like something was breathing on the power switch. The cause was a file that had quietly **doubled in size**. This is The Point of Failure, episode one hundred sixteen.
 
 November 18th, 2025. X — down. ChatGPT — down. Spotify, Canva, Uber — down. Even the sites people use to check whether sites are down — down, because they live behind Cloudflare too. And unlike a clean outage, this one pulsed — services recovering for minutes, then collapsing again. Inside Cloudflare, that pulse read like something worse — it looked, at first, **like an attack**.
 
@@ -257,7 +257,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 124 · The Outage They Pinned on One Engineer',
     body: `[EP 124 · ~75s · industry morality tale]
 
-A big tech outage, hours long, global. But the reason engineers still talk about this one is what the company said afterward — it pointed at **one engineer**. This is The Point of Failure, episode one twenty four.
+A big tech outage, hours long, global. But the reason engineers still talk about this one is what the company said afterward — it pointed at **one engineer**. This is The Point of Failure, episode one hundred twenty four.
 
 May 2021. Salesforce, the system of record for a huge share of the world's sales teams, goes down for hours. The trigger — a DNS configuration change, applied by an engineer using an emergency shortcut process instead of the slow, staggered standard rollout. The change spreads everywhere at once, DNS resolution collapses across data centers, and, this arc's oldest chorus, the repair tools are **behind the broken layer** too.
 
@@ -277,7 +277,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 134 · The Script That Deleted the Customers',
     body: `[EP 134 · ~90s · slow horror]
 
-A cleanup script asked for a list of things to delete. It was handed **the wrong list**. Two weeks later, the last customers got their companies' memory back. This is The Point of Failure, episode one thirty four.
+A cleanup script asked for a list of things to delete. It was handed **the wrong list**. Two weeks later, the last customers got their companies' memory back. This is The Point of Failure, episode one hundred thirty four.
 
 April 2022. Atlassian, maker of Jira and Confluence, the tools where thousands of companies keep their plans, tickets, documentation, their institutional memory, is retiring an old legacy app. Routine housekeeping — run a script, delete the deprecated components. The script needs a list of IDs telling it what to remove.
 
@@ -299,7 +299,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 139 · 73 Hours',
     body: `[EP 139 · ~90s · mystery epic]
 
-One of the biggest platforms on earth went dark for **seventy three hours**, and for most of them, the engineers could barely see inside their own system. This is The Point of Failure, episode one thirty nine.
+One of the biggest platforms on earth went dark for **seventy three hours**, and for most of them, the engineers could barely see inside their own system. This is The Point of Failure, episode one hundred thirty nine.
 
 Halloween weekend, 2021. Roblox — fifty million people a day, a huge share of them kids in costumes with a long weekend, and the whole platform is down. Not degraded. Down. The internet immediately invents a cause — **a burrito promotion** had overloaded it. Genuinely the leading theory online for days. It was wrong, and the truth is better.
 
@@ -319,7 +319,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 149 · Down on the First Workday of the Year',
     body: `[EP 149 · ~60s · compact, empathetic]
 
-The whole working world came back from the holidays, opened the same app in the same hour... and **the app was not there**. This is The Point of Failure, episode one forty nine.
+The whole working world came back from the holidays, opened the same app in the same hour... and **the app was not there**. This is The Point of Failure, episode one hundred forty nine.
 
 Remember that Monday. Deep pandemic, offices are apartments, and Slack is the office. At nine a.m., timezone by timezone, tens of millions of people pour back from the holidays and open it within the same narrow window. **The most predictable traffic spike of the year**, printed on every calendar on earth.
 
@@ -339,7 +339,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 157 · 43 Seconds That Cost 24 Hours',
     body: `[EP 157 · ~90s · precision drama]
 
-The network failure lasted **forty three seconds**. The outage lasted **twenty four hours**. The gap between those numbers is the whole story. This is The Point of Failure, episode one fifty seven.
+The network failure lasted **forty three seconds**. The outage lasted **twenty four hours**. The gap between those numbers is the whole story. This is The Point of Failure, episode one hundred fifty seven.
 
 October 2018. GitHub — the working memory of the world's software. During routine maintenance, the link between its East Coast data center and the hub to the West Coast drops. For forty three seconds. In human time, a hiccup — you would blink and reload. In database time, forty three seconds is **an era**.
 
@@ -359,7 +359,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 163 · A Platform's Rough Winter",
     body: `[EP 163 · ~75s · ongoing history, sober]
 
-The platform that hosts the world's code spent a winter going down so often that its own CTO published a diagnosis, and a famous project packed its bags. This is The Point of Failure, episode one sixty three.
+The platform that hosts the world's code spent a winter going down so often that its own CTO published a diagnosis, and a famous project packed its bags. This is The Point of Failure, episode one hundred sixty three.
 
 GitHub. If software is the world's infrastructure, this is where much of it lives. And per independent tracking of its own status reports, from late 2025 into 2026 its incident count climbed month over month — January, February 2026 the worst stretch, dozens of incidents, with Actions, the automation service teams depend on to ship, hit hardest. For working developers it stopped being trivia — **pipelines stalling is payroll stalling**.
 
@@ -379,7 +379,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 172 · The Satellites Were Fine',
     body: `[EP 172 · ~60s · compact, elegant]
 
-Thousands of satellites, all healthy, all in position, **all useless for two and a half hours**. The sky was fine. The software was not. This is The Point of Failure, episode one seventy two.
+Thousands of satellites, all healthy, all in position, **all useless for two and a half hours**. The sky was fine. The software was not. This is The Point of Failure, episode one hundred seventy two.
 
 July 2025. Starlink — the largest satellite constellation ever built, internet for the places wires never reached. And one afternoon, across four continents at once, terminals lose connection. Rural clinics, ships at sea, remote businesses, for many of whom this dish is **the only line out**. There is no cell tower plan B where these users live. That is the entire reason they have the dish.
 

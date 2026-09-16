@@ -193,7 +193,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 106 · The Sepsis Alarm That Missed Sepsis',
     body: `[EP 106 · SERIOUS — measured, low energy, no smile]
 
-An AI early warning system for one of the deadliest conditions in hospitals ran in hundreds of them... before independent researchers ever tested it. This is The Point of Failure, episode one oh six.
+An AI early warning system for one of the deadliest conditions in hospitals ran in hundreds of them... before independent researchers ever tested it. This is The Point of Failure, episode one hundred six.
 
 Sepsis — the body's runaway response to infection. It kills more hospital patients than almost anything, and it is a race — catch it hours earlier, save lives. So when the biggest medical records company in America offered a built in sepsis prediction model, hundreds of hospitals switched it on. The pitch was self evident. Who says no to earlier warnings?
 
@@ -215,7 +215,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 114 · The Hiring AI That Learned the Wrong Lesson',
     body: `[EP 114 · ~60s · parable, tight]
 
-Amazon built an AI to score job applicants. It taught itself to mark down resumes containing the word — **women's**. This is The Point of Failure, episode one fourteen.
+Amazon built an AI to score job applicants. It taught itself to mark down resumes containing the word — **women's**. This is The Point of Failure, episode one hundred fourteen.
 
 2014. Machine learning is eating every workflow, and hiring looks perfect for it — Amazon receives oceans of resumes, so a team builds an experimental model to score them, one to five stars, like products. The training data is the obvious choice — ten years of the company's own resumes and outcomes. Learn what we hired, find more of it.
 
@@ -235,7 +235,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 123 · The Credit Limit Nobody Could Explain',
     body: `[EP 123 · ~75s · investigation story]
 
-A famous programmer got **twenty times** his wife's credit limit, same finances, her credit score better. The bank's answer — the algorithm decided. This is The Point of Failure, episode one twenty three.
+A famous programmer got **twenty times** his wife's credit limit, same finances, her credit score better. The bank's answer — the algorithm decided. This is The Point of Failure, episode one hundred twenty three.
 
 November 2019. The Apple Card is new and shiny. Then David Heinemeier Hansson, creator of Ruby on Rails, posts his experience — he and his wife share finances, file jointly, her credit score is higher, and the card's algorithm gave him, by his account, twenty times her limit. Steve Wozniak, Apple's own co founder, replies — same here, ten to one.
 
@@ -255,7 +255,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 135 · Bacon on the Ice Cream',
     body: `[EP 135 · ~60s · comedy, affectionate]
 
-McDonald's tested AI drive thru ordering for three years. TikTok retired it with **two hundred sixty chicken nuggets**. This is The Point of Failure, episode one thirty five.
+McDonald's tested AI drive thru ordering for three years. TikTok retired it with **two hundred sixty chicken nuggets**. This is The Point of Failure, episode one hundred thirty five.
 
 2021. McDonald's and IBM launch a serious pilot — AI voice taking your drive thru order, live, in over a hundred restaurants. On paper it is a perfect use case — a bounded menu, repetitive dialogue, staff freed for the kitchen. What the paper underestimates is the microphone's actual life — wind, engines, back seat kids, two people talking at once, and a speaker crackling like it is 1987.
 
@@ -271,7 +271,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 142 · 18,000 Waters',
     body: `[EP 142 · ~60s · comedy sequel]
 
-A year after McDonald's pulled its drive thru AI, a man asked Taco Bell's for **eighteen thousand waters**. It started ringing them up. This is The Point of Failure, episode one forty two.
+A year after McDonald's pulled its drive thru AI, a man asked Taco Bell's for **eighteen thousand waters**. It started ringing them up. This is The Point of Failure, episode one hundred forty two.
 
 If you saw my McDonald's episode, you know the drive thru is the Everest of voice AI. Taco Bell climbed anyway, and at real scale — over five hundred locations by 2025. Braver rollout, same physics. And the internet, having tasted nuggets, was waiting.
 
@@ -291,7 +291,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 151 · The Government Report With Invented Sources',
     body: `[EP 151 · ~75s · professional gravity]
 
-A Big Four firm refunded part of a government contract because its official report cited **sources that do not exist**. Including a quote from a judge who never said it. This is The Point of Failure, episode one fifty one.
+A Big Four firm refunded part of a government contract because its official report cited **sources that do not exist**. Including a quote from a judge who never said it. This is The Point of Failure, episode one hundred fifty one.
 
 2025. The Australian government pays Deloitte around four hundred forty thousand dollars for a review of a welfare compliance system — exactly the kind of document that shapes policy and gets cited for years. It ships. It looks like every such report — confident prose, footnotes marching down the pages like proof.
 
@@ -311,7 +311,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 177 · The Writers Who Never Existed',
     body: `[EP 177 · ~60s · media mystery]
 
-One of the most trusted names in sports journalism was caught publishing **writers who did not exist**, with faces bought from an AI face store. This is The Point of Failure, episode one seventy seven.
+One of the most trusted names in sports journalism was caught publishing **writers who did not exist**, with faces bought from an AI face store. This is The Point of Failure, episode one hundred seventy seven.
 
 Sports Illustrated. Seventy years of legendary covers and war grade sports writing. In November 2023, the outlet Futurism starts pulling a thread on SI's website — product review articles by authors like Drew Ortiz. Friendly face. Outdoorsy bio. Except the face traces back to a marketplace that sells AI generated headshots, the bio matches no living person, and when questions arrive... the profiles quietly change or vanish.
 
@@ -329,7 +329,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 179 · When the AI Layer Itself Goes Down',
     body: `[EP 179 · ~75s · zeitgeist, forward looking]
 
-The tools everyone now works with, the AI assistants themselves, spent one recent June taking turns going down. This is The Point of Failure, episode one seventy nine.
+The tools everyone now works with, the AI assistants themselves, spent one recent June taking turns going down. This is The Point of Failure, episode one hundred seventy nine.
 
 June 2026. Within a few weeks of each other, per the network monitoring firms that watch the internet's pulse — Gemini has a notable outage. Then Meta's services. Then Claude. Different companies, different days, unrelated causes. Ordinary outages, honestly, the kind this show has covered at every layer of the stack for a hundred episodes — storage, DNS, payments, power.
 

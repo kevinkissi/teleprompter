@@ -87,7 +87,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 103 · The City That Needed a Server',
     body: `[EP 103 · ~60s · corporate hubris comedy]
 
-The publisher said your single player city literally could not exist without their servers. A modder disproved it... **in minutes**. This is The Point of Failure, episode one oh three.
+The publisher said your single player city literally could not exist without their servers. A modder disproved it... **in minutes**. This is The Point of Failure, episode one hundred three.
 
 March 2013. The beloved SimCity returns — rebuilt, gorgeous, and always online — even your solo city requires a live server connection. Players ask the obvious — why? The answer, from the top — necessity — significant simulation calculations, they said, run in the cloud — your city cannot exist without it. Launch arrives. The servers melt. For weeks — queues to enter your own city, features switched off to shed load, cities unreachable — a single player game, down.
 
@@ -105,7 +105,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 128 · 50 Times the Worst Case',
     body: `[EP 128 · ~75s · joyful catastrophe]
 
-The launch traffic was not double the worst case. Not triple. Ten times the worst case — **fifty times the plan**. This is The Point of Failure, episode one twenty eight.
+The launch traffic was not double the worst case. Not triple. Ten times the worst case — **fifty times the plan**. This is The Point of Failure, episode one hundred twenty eight.
 
 July 2016. Pokemon Go releases, and something without precedent happens — the world goes outside. Parks fill at midnight. Strangers stampede city squares because someone shouted a rare creature's name. People who had never gamed in their lives — grandparents, toddlers' parents, entire office floors — install it in days. And every one of them is a live connection to servers planned for a hit game... not a planetary behavior change.
 
@@ -125,7 +125,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 133 · 140 Hospitals on Paper',
     body: `[SERIOUS — measured, low energy, no smile]
 
-For over a month, one of America's biggest hospital chains ran on paper — and the safety net caught in software for twenty years... rode on clipboards instead. This is The Point of Failure, episode one thirty three.
+For over a month, one of America's biggest hospital chains ran on paper — and the safety net caught in software for twenty years... rode on clipboards instead. This is The Point of Failure, episode one hundred thirty three.
 
 May 2024. Ascension — around a hundred forty hospitals — is hit by ransomware, attributed in reporting to the Black Basta group. The electronic health record goes down chain wide — and with it, the invisible things stitched into it — the allergy flag that fires before a wrong order, the dose checker, the drug interaction alarm, the legible, instantly shared chart. Ambulances divert from some facilities. And a hundred forty hospitals step back twenty years in one morning.
 
@@ -143,7 +143,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 161 · The Blood Ran Short',
     body: `[SERIOUS — measured, low energy, no smile]
 
-A ransomware attack on a laboratory ended with a national appeal for blood donors — and, a hospital later confirmed, contributed to the death of a patient. This is The Point of Failure, episode one sixty one.
+A ransomware attack on a laboratory ended with a national appeal for blood donors — and, a hospital later confirmed, contributed to the death of a patient. This is The Point of Failure, episode one hundred sixty one.
 
 June 3rd, 2024. Synnovis runs pathology — blood tests, diagnostics, transfusion matching — for some of London's biggest hospitals, King's College and Guy's and St Thomas' among them. Pathology is medicine's silent gatekeeper — nearly every serious decision — operate or wait, transfuse or hold, which drug, what dose — waits on the lab. That morning, ransomware — attributed in reporting to a group called Qilin — takes the lab's systems down.
 
@@ -165,7 +165,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 168 · The Eras Tour Presale',
     body: `[EP 168 · ~90s · cultural event forensic]
 
-Three and a half million verified fans. Billions of requests. A canceled public sale. And a ticketing website's worst morning ended up in front of the United States Senate. This is The Point of Failure, episode one sixty eight.
+Three and a half million verified fans. Billions of requests. A canceled public sale. And a ticketing website's worst morning ended up in front of the United States Senate. This is The Point of Failure, episode one hundred sixty eight.
 
 November 15th, 2022. The Eras Tour presale — the biggest event in Ticketmaster's Verified Fan history — three and a half million registered fans, each vetted, each holding a code, each ready at 10 a.m. Read that setup the way this show does — **the demand was pre counted**. Registration WAS the forecast — delivered days in advance, to the request.
 
@@ -185,7 +185,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 174 · The Day the Ocean Cut the Internet',
     body: `[EP 174 · ~90s · continental scale]
 
-One morning, in one stretch of ocean, four cables failed — and a dozen countries' internet dimmed at once. I felt this one personally. This is The Point of Failure, episode one seventy four.
+One morning, in one stretch of ocean, four cables failed — and a dozen countries' internet dimmed at once. I felt this one personally. This is The Point of Failure, episode one hundred seventy four.
 
 March 14th, 2024. Off the coast of Côte d'Ivoire, the seafloor drops into a submarine canyon — the locals' name for it translates to the bottomless hole — and through that neighborhood run four of the great cables tying West Africa to the global internet. That morning — widely reported as a suspected undersea landslide — all four are damaged in the same area. WACS. MainOne. SAT-3. ACE. Not an attack. **Geology**.
 
@@ -205,7 +205,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 175 · Therac-25',
     body: `[SERIOUS — measured, low energy, no smile]
 
-This is the oldest story in this series, and the reason the discipline this show celebrates exists at all. It must be told exactly right. This is The Point of Failure, episode one seventy five.
+This is the oldest story in this series, and the reason the discipline this show celebrates exists at all. It must be told exactly right. This is The Point of Failure, episode one hundred seventy five.
 
 The 1980s. Radiation therapy — precisely aimed, precisely dosed beams — is saving cancer patients daily. A new machine, the Therac-25, arrives as the state of the art — computer controlled, efficient, modern. Its predecessors had hardware interlocks — physical mechanisms that made unsafe states mechanically impossible, no matter what the software did. On the Therac-25, the software had earned so much trust... that several of those physical safeguards were removed. Safety became the code's job alone. Hold that decision. Everything that follows flows from it.
 
@@ -227,7 +227,7 @@ Every failure has a story. Every story was preventable. I'm Kevin.`,
     title: 'EP 176 · The Library That Chose Not to Pay',
     body: `[EP 176 · ~75s · quietly hopeful]
 
-Hackers encrypted one of the great libraries of the world and demanded payment. The library **said no** — took the years long cost — and then published everything it learned. This is The Point of Failure, episode one seventy six.
+Hackers encrypted one of the great libraries of the world and demanded payment. The library **said no** — took the years long cost — and then published everything it learned. This is The Point of Failure, episode one hundred seventy six.
 
 October 2023. The British Library — a hundred seventy years of accumulated human record, from manuscripts to sound archives — is hit by ransomware from the Rhysida group. Systems encrypted, internal data stolen, a ransom demanded — reported around twenty bitcoin. And the library, aligned with public sector policy and its own principles, refuses. The attackers leak the data. And the long cost begins.
 
@@ -247,7 +247,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 178 · When the Cash Ran Out and the Apps Fell Over',
     body: `[EP 178 · ~90s · careful, human]
 
-A nation of two hundred million people moved its money onto digital rails — not over a decade — over a few weeks. The rails were not asked first. This is The Point of Failure, episode one seventy eight.
+A nation of two hundred million people moved its money onto digital rails — not over a decade — over a few weeks. The rails were not asked first. This is The Point of Failure, episode one hundred seventy eight.
 
 Nigeria, late 2022. The central bank redesigns the naira — new notes, deadlines to deposit the old, and limits on cash withdrawals — policy aimed, in its own stated goals, at hoarding, counterfeiting, and accelerating digital payments. This show holds no opinion on the policy. It is here for what happened next to the infrastructure — because almost overnight, physical cash — the bloodstream of Africa's largest economy — became scarce. And tens of millions of people reached for their phones at once.
 

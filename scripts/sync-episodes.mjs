@@ -79,16 +79,20 @@ const TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 
 
 /**
  * Spoken form of an episode number, in the show's own style: "twelve",
- * "ninety three" (no hyphen), "one twenty eight". Both multi-word samples come
- * from the book itself — the finale's corrected cross-references. The hundreds
- * are read the way a year is, so 102 is "one oh two", not "one hundred two".
+ * "ninety three" (no hyphen), "one hundred seventy six".
+ *
+ * The hundreds are spelled in full because that is the one three-digit episode
+ * number the show has actually said on camera: the finale opens "This is The
+ * Point of Failure — episode one hundred eighty" and goes on to "our one hundred
+ * eighty stories". The book's other three-digit sample, "one twenty eight", is
+ * from the cross-reference it corrected away for naming the wrong episode, so it
+ * carries no authority on style.
  */
 function spokenNumber(n) {
   if (n < 20) return ONES[n]
   if (n < 100) return ONES[n % 10] ? `${TENS[Math.floor(n / 10)]} ${ONES[n % 10]}` : TENS[Math.floor(n / 10)]
   if (n === 100) return 'one hundred'
-  if (n < 110) return `one oh ${ONES[n - 100]}`
-  return `one ${spokenNumber(n - 100)}`
+  return `one hundred ${spokenNumber(n - 100)}`
 }
 
 const pad3 = n => String(n).padStart(3, '0')
@@ -216,16 +220,28 @@ function extendHistory(history, bundle) {
  * current release order. Without this the script is a one-way door: a later
  * change to launch-order.json could not fix a number already spelled into a body.
  */
+/**
+ * The words an episode number can be spelled with. Matching these rather than
+ * "up to N words" is what keeps the pattern from eating prose: the corpus has
+ * "...grounded the planet, episode one of this show", and a word-counting
+ * pattern would swallow it.
+ */
+const NUMBER_WORD = '(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|oh)'
+const SPOKEN_NUMBER = new RegExp(
+  `(The Point of Failure\\s*[,:\u2014-]?\\s*episode\\s*)(?:\\[N\\]|${NUMBER_WORD}(?:\\s+${NUMBER_WORD})*)(?=\\s*[.,])`,
+  'g',
+)
+
 function restorePlaceholders(body) {
   return body
     .replace(/^\[(?:EP\s*\d+|#\d+)\s*·\s*/, '[@@N@@ · ')
-    .replace(/(The Point of Failure,\s*episode\s*)(?:\[N\]|[a-z]+(?:\s+[a-z]+){0,2})(?=\s*[.,])/g, '$1[N]')
+    .replace(SPOKEN_NUMBER, '$1[N]')
 }
 
 function applyNumbering(body, release) {
   return body
     .replace(/^\[@@N@@\s*·\s*/, `[EP ${release} · `)
-    .replace(/(The Point of Failure,\s*episode\s*)\[N\]/g, `$1${spokenNumber(release)}`)
+    .replace(/(The Point of Failure\s*[,:\u2014-]?\s*episode\s*)\[N\]/g, `$1${spokenNumber(release)}`)
 }
 
 // ----------------------------------------------------------------- comparison

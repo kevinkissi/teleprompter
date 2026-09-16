@@ -263,7 +263,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 109 · 'It Should Have Been Our iPod Moment'",
     body: `[EP 109 · ~75s · inside the room]
 
-Three products launched on the same day. One of them broke. And the meeting that followed became Silicon Valley legend. This is The Point of Failure, episode one oh nine.
+Three products launched on the same day. One of them broke. And the meeting that followed became Silicon Valley legend. This is The Point of Failure, episode one hundred nine.
 
 July 2008. Apple launches the iPhone 3G, the App Store, and MobileMe — email, contacts, calendars, synced across your devices — all on the same day. Three enormous products, one date, one shared wave of traffic. The phone soars. The App Store makes history. MobileMe... buckles. Days of outages. Sync failures. A slice of users locked out of email for an extended stretch, some messages gone for good.
 
@@ -283,7 +283,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 110 · The App That Broke Caucus Night',
     body: `[EP 110 · ~90s · civic thriller]
 
-The first vote of a presidential race, and the app collecting the results was **two months old**, distributed like a beta test, and broke on the night. This is The Point of Failure, episode one ten.
+The first vote of a presidential race, and the app collecting the results was **two months old**, distributed like a beta test, and broke on the night. This is The Point of Failure, episode one hundred ten.
 
 February 3rd, 2020. Iowa. By tradition, the opening night of the American presidential primary, with the world's press watching one number — who won. This cycle, precinct results will flow through a new smartphone app, built by a small firm in roughly two months, for a reported budget **around sixty thousand dollars**. For scale — that is less than many companies spend testing a checkout button.
 
@@ -303,7 +303,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 119 · The Wiped Calibration Files',
     body: `[SERIOUS — measured, low energy, no smile]
 
-The software on the aircraft was correct. The data it needed had been erased during installation. Four crew members did not come home. This is The Point of Failure, episode one nineteen.
+The software on the aircraft was correct. The data it needed had been erased during installation. Four crew members did not come home. This is The Point of Failure, episode one hundred nineteen.
 
 May 9th, 2015. Seville, Spain. An A400M — Europe's heavy military transport — lifts off on a production test flight, the routine proving run before delivery. Six crew aboard, experienced test personnel. Within moments of takeoff, three of the four engines stop responding to command — frozen at settings too low to keep the aircraft flying. The crew fights to return. The aircraft comes down in a field. Four of the six are killed.
 
@@ -323,7 +323,7 @@ Every failure has a story. Every story was preventable. I'm Kevin.`,
     title: 'EP 121 · Census Night',
     body: `[EP 121 · ~75s · national embarrassment]
 
-A country scheduled its entire population to visit one website on the same evening. The website did not survive the evening. This is The Point of Failure, episode one twenty one.
+A country scheduled its entire population to visit one website on the same evening. The website did not survive the evening. This is The Point of Failure, episode one hundred twenty one.
 
 August 9th, 2016. Australia's census goes digital — millions of households officially instructed to log on that Tuesday night and be counted. Read that design back — a mandatory, nationally advertised, single evening traffic spike, **announced years in advance**. The most foreseeable load event in the country's history. Which is what makes what happened next an engineering parable rather than bad luck.
 
@@ -343,7 +343,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 130 · The Baggage System That Delayed an Airport',
     body: `[EP 130 · ~90s · ambition autopsy]
 
-A whole airport, finished and gleaming, sat closed for sixteen months, at **a million dollars a day**, waiting for its baggage system to stop eating the luggage. This is The Point of Failure, episode one thirty.
+A whole airport, finished and gleaming, sat closed for sixteen months, at **a million dollars a day**, waiting for its baggage system to stop eating the luggage. This is The Point of Failure, episode one hundred thirty.
 
 Early 1990s. Denver is building America's newest mega airport, and it commits to a moonshot — the most ambitious baggage system ever attempted. Thousands of independent robotic carts on tens of miles of track, reading tags, switching junctions, delivering every bag in the airport automatically. No airport on earth had done it at a fraction of this scale. Denver would do all of it, at once, coupled to an immovable opening date.
 
@@ -363,7 +363,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 143 · Opening Day at Terminal 5',
     body: `[EP 143 · ~75s · grand opening disaster]
 
-Twenty years of planning. Four billion pounds. A royal opening. And day one collapsed partly because the staff couldn't find the car park. This is The Point of Failure, episode one forty three.
+Twenty years of planning. Four billion pounds. A royal opening. And day one collapsed partly because the staff couldn't find the car park. This is The Point of Failure, episode one hundred forty three.
 
 March 27th, 2008. Heathrow Terminal 5 — Britain's showcase, decades in the making, opened by the Queen herself days before. The baggage system alone is an underground marvel, and it has been tested — extensively, successfully, **in isolation**. Hold that phrase. In isolation.
 
@@ -383,7 +383,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 144 · The Company You'd Never Heard of Until Check In Died",
     body: `[EP 144 · ~60s · hidden dependency reveal]
 
-One morning, check in desks slowed and stalled on every continent at once — at airlines that compete with each other everywhere except one place — their software. This is The Point of Failure, episode one forty four.
+One morning, check in desks slowed and stalled on every continent at once — at airlines that compete with each other everywhere except one place — their software. This is The Point of Failure, episode one hundred forty four.
 
 September 2017. Passengers in Sydney, Frankfurt, Singapore, Washington hit the same wall in the same hour — check in systems crawling or down, agents reaching for the manual folder. Different airlines. Different alliances. Different continents. Synchronized failure. And synchronization, on this show, always means one thing — somewhere below the brands, there is a **shared layer**.
 
@@ -401,7 +401,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 150 · goto fail',
     body: `[EP 150 · ~60s · minimalist thriller]
 
-Two words, accidentally pasted twice, turned off part of the internet's security on millions of devices. And anyone could read the mistake. This is The Point of Failure, episode one fifty.
+Two words, accidentally pasted twice, turned off part of the internet's security on millions of devices. And anyone could read the mistake. This is The Point of Failure, episode one hundred fifty.
 
 February 2014. Apple ships an urgent fix for iPhones, then Macs, for a flaw in the code that answers a sacred question — when your device connects somewhere secure, is it really them? That verification runs in a chain of checks, written, like much code of its era, as a ladder of steps, each ending — if this failed, goto fail — jump to the error exit.
 
@@ -419,7 +419,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 155 · Pen and Paper Boarding Passes',
     body: `[EP 155 · ~75s · resilience focused]
 
-In 2025, at some of Europe's biggest airports, your boarding pass was handwritten. And that was the system working. This is The Point of Failure, episode one fifty five.
+In 2025, at some of Europe's biggest airports, your boarding pass was handwritten. And that was the system working. This is The Point of Failure, episode one hundred fifty five.
 
 September 2025. A cyberattack — ransomware, per reporting citing Europe's cyber agency — hits Collins Aerospace's MUSE platform — the shared check in and boarding software that lets many airlines use the same desks and gates at big airports. One vendor. Shared by design. Heathrow, Brussels, Berlin — within hours, screens down, and thousands of passengers watching agents do something almost archaeological — writing boarding passes by hand.
 
@@ -437,7 +437,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: 'EP 164 · The Commented Line That Weakened the World',
     body: `[EP 164 · ~75s · slow dread]
 
-To silence a warning, two lines of code were removed. For the next two years, a huge share of the internet's locks came from a keyring with **thirty two thousand** keys on it. This is The Point of Failure, episode one sixty four.
+To silence a warning, two lines of code were removed. For the next two years, a huge share of the internet's locks came from a keyring with **thirty two thousand** keys on it. This is The Point of Failure, episode one hundred sixty four.
 
 2006. A volunteer maintainer for Debian, one of the great Linux distributions, is doing diligent work — running an analysis tool over OpenSSL, the library that generates the internet's encryption keys. The tool raises warnings about certain lines. Investigating, consulting, following process, he comments those lines out. The warnings stop. Everything keeps working. Everything looks exactly the same.
 
@@ -457,7 +457,7 @@ Every failure has a story. Every story was preventable. I'm Kevin. See you at th
     title: "EP 173 · The Week Europe's GPS Went Dark",
     body: `[EP 173 · ~60s · forward looking]
 
-Europe's answer to GPS went dark for nearly a week. Billions of devices didn't care. Both halves of that sentence are the lesson. This is The Point of Failure, episode one seventy three.
+Europe's answer to GPS went dark for nearly a week. Billions of devices didn't care. Both halves of that sentence are the lesson. This is The Point of Failure, episode one hundred seventy three.
 
 July 2019. Galileo — the European Union's own satellite navigation constellation, decades and billions in the making, then in its initial services phase — stops making sense. Literally — the signals broadcast time, receivers compute position from time, and the time went invalid. For nearly a week. The satellites? Healthy, all of them, holding formation. The failure was on the ground — traced to the precise timing facility, the equipment that generates the system's **master clock**, and to the upgrade process around it.
 
