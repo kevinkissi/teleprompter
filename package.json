@@ -9,6 +9,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host",
     "typecheck": "tsc -b --noEmit",
+    "episodes": "node scripts/sync-episodes.mjs",
+    "episodes:check": "node scripts/sync-episodes.mjs --check",
+    "verify:seed": "node scripts/verify-seed-sync.mjs",
     "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {

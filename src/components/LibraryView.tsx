@@ -5,6 +5,7 @@ import { SettingsPanel } from './SettingsPanel'
 import { PresetManager } from './PresetManager'
 import { CalibrationView } from './CalibrationView'
 import { RemoteTab } from './RemoteTab'
+import { UpdateBanner } from './UpdateBanner'
 
 const TABS: { id: 'scripts' | 'setup' | 'presets' | 'settings' | 'remote'; label: string }[] = [
   { id: 'scripts', label: 'Scripts' },
@@ -27,6 +28,8 @@ export function LibraryView() {
           <h1 style={{ fontSize: 20 }}>Teleprompter</h1>
         </div>
       </div>
+
+      <UpdateBanner />
 
       {!editingScriptId && (
         <div className="tabs">

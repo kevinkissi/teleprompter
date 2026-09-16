@@ -24,9 +24,14 @@ import {
 } from './defaults'
 import { scrollController } from './scrollController'
 import * as scriptsRepo from '../storage/scriptsRepository'
+import { getMeta, setMeta } from '../storage/db'
+import type { SeedSyncResult } from '../storage/seedSync'
 import * as presetsRepo from '../storage/presetsRepository'
 import { nextRotation } from '../utils/transform'
-import { POF_EPISODES } from '../data/pof'
+import { POF_EPISODES, POF_SEED_HISTORY, POF_SEED_VERSION } from '../data/pof'
+
+/** meta key holding the bundled-episode version this library was last synced to. */
+const SEED_VERSION_KEY = 'pofSeedVersion'
 
 type View = 'library' | 'reader' | 'remote'
 type LibraryTab = 'scripts' | 'presets' | 'setup' | 'settings' | 'remote'
@@ -71,7 +76,8 @@ interface AppState {
   deleteScript: (id: string) => Promise<void>
   archiveScript: (id: string) => Promise<void>
   unarchiveScript: (id: string) => Promise<void>
-  importSeries: () => Promise<{ added: number; total: number }>
+  importSeries: () => Promise<SeedSyncResult>
+  syncSeriesIfStale: (scripts: Script[]) => Promise<void>
   selectScript: (id: string) => Promise<void>
   persistPosition: (id: string, positionPx: number) => Promise<void>
 
@@ -171,6 +177,22 @@ export const useAppStore = create<AppState>()(
           ? get().currentScriptId
           : null
         set({ scripts, presets, activePresetId, currentScriptId, hydrated: true })
+        await get().syncSeriesIfStale(scripts)
+      },
+
+      /**
+       * Bring an already-loaded series up to date with this build. Runs once per
+       * bundle version, only for a library that actually holds series scripts —
+       * a reader who has never tapped "Load series" is left with an empty
+       * library, exactly as before. Edited scripts are never overwritten.
+       */
+      async syncSeriesIfStale(scripts) {
+        const seeded = POF_EPISODES.some((ep) => scripts.some((s) => s.id === ep.id))
+        if (!seeded) return
+        if ((await getMeta(SEED_VERSION_KEY)) === POF_SEED_VERSION) return
+        const result = await scriptsRepo.syncSeedEpisodes(POF_EPISODES, POF_SEED_VERSION, POF_SEED_HISTORY)
+        await setMeta(SEED_VERSION_KEY, POF_SEED_VERSION)
+        if (result.added > 0 || result.updated > 0) await get().refreshScripts()
       },
 
       async refreshScripts() {
@@ -230,9 +252,10 @@ export const useAppStore = create<AppState>()(
       },
 
       async importSeries() {
-        const added = await scriptsRepo.importSeedEpisodes(POF_EPISODES)
-        if (added > 0) await get().refreshScripts()
-        return { added, total: POF_EPISODES.length }
+        const result = await scriptsRepo.syncSeedEpisodes(POF_EPISODES, POF_SEED_VERSION, POF_SEED_HISTORY)
+        await setMeta(SEED_VERSION_KEY, POF_SEED_VERSION)
+        if (result.added > 0 || result.updated > 0) await get().refreshScripts()
+        return result
       },
 
       async selectScript(id) {

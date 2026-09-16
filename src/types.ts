@@ -84,6 +84,15 @@ export interface Script {
   archived?: boolean
   /** When it was archived (ISO); used to sort the archive bucket most-recent-first. */
   archivedAt?: string
+  /**
+   * Set on scripts that came from the bundled series. These record the title and
+   * body exactly as last seeded, so a later bundle can refresh the episode
+   * numbering on the ones you have not touched and leave your edits alone.
+   * Absent on your own scripts, and on series scripts seeded before this existed.
+   */
+  seedVersion?: string
+  seedTitleHash?: string
+  seedBodyHash?: string
 }
 
 export interface AppSettings {

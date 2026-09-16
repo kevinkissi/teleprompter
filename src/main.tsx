@@ -1,13 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { registerSW } from 'virtual:pwa-register'
+import { initServiceWorker } from './pwa/swUpdate'
 import App from './App'
 import './styles/global.css'
 
-// Register the service worker for offline use. With registerType 'prompt' we do NOT
-// pass an onNeedRefresh handler, so a newly built SW stays in "waiting" and never
-// reloads the page mid-session — it takes over on the next natural launch.
-registerSW({ immediate: true })
+// Register the service worker for offline use. A new build still never reloads
+// the page on its own; it is offered in the Library and applied on a tap, so an
+// update can neither interrupt a live session nor sit in "waiting" unnoticed.
+initServiceWorker()
 
 const rootEl = document.getElementById('root')
 if (rootEl) {

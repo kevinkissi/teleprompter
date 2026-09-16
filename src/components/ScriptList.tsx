@@ -94,11 +94,15 @@ export function ScriptList() {
   async function handleLoadSeries() {
     setLoadingSeries(true)
     try {
-      const { added, total } = await importSeries()
+      const { added, updated, keptEdited, total } = await importSeries()
+      const parts = []
+      if (added > 0) parts.push(`loaded ${added} new script${added === 1 ? '' : 's'}`)
+      if (updated > 0) parts.push(`refreshed ${updated}`)
+      if (keptEdited > 0) parts.push(`left ${keptEdited} you have edited untouched`)
       alert(
-        added === 0
-          ? `All ${total} “Point of Failure” scripts are already in your library.`
-          : `Loaded ${added} new script${added === 1 ? '' : 's'} (of ${total} in the series).`,
+        parts.length === 0
+          ? `All ${total} “Point of Failure” scripts are already up to date.`
+          : `${parts.join(', ')} (of ${total} in the series).`,
       )
     } finally {
       setLoadingSeries(false)

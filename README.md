@@ -108,10 +108,29 @@ Parsing lives in [src/utils/prompterFormat.ts](src/utils/prompterFormat.ts); ren
 All 180 episode scripts ship with the app, cleaned to spoken text only (no fact boxes, edit cues,
 or timecodes) and formatted with the markup above — sparse emphasis on the key numbers/punchlines
 and `[beat]` rests derived from the production book's own EDIT cues. Tap **Load series** in the
-Library to add them all at once, in filming order. The import is **idempotent and non-destructive**:
-re-tapping only adds what's missing (matched by stable id) and never overwrites your edits, notes,
-or scroll position. Data lives in [src/data/pof/](src/data/pof/) (one file per volume); the importer
-is `importSeedEpisodes` in [src/storage/scriptsRepository.ts](src/storage/scriptsRepository.ts).
+Library to add them all at once, in **public release order**. Data lives in
+[src/data/pof/](src/data/pof/) (one file per production-book volume).
+
+**Numbering.** Episodes are titled and ordered by their public release position (`EP 1` … `EP 180`),
+which is also the number each script speaks in its opening line. That order is an editorial
+decision and is *not* the production-book master number — release 1 is master #27 — so it is never
+derived, only read from the book data.
+
+**Refreshing the bundle.** `npm run episodes` regenerates ids, numbering, titles and arc grouping
+from the distributor's production book (`../assetdistro/content/book`, or `$TPOF_BOOK_DIR`);
+`npm run episodes:check` reports what would change without writing. Script *bodies* are hand-cleaned
+for the reader, so they are carried forward rather than regenerated — the script reports any drift
+against the book instead of overwriting it, and applies the book's editorial corrections from a
+table it keeps.
+
+**Getting a refresh onto a phone.** A library that already holds the series is re-synced on launch
+whenever the bundled `POF_SEED_VERSION` changes, so corrected scripts and new episode numbers
+actually arrive — the old import only ever added missing episodes, which meant a renumbering never
+reached a phone that had already loaded the series. The sync is still **non-destructive**: an
+episode you have edited is left alone (only its number is refreshed), and notes, scroll position and
+archive state are preserved on every episode. The decision of what may be touched is
+[src/storage/seedSync.ts](src/storage/seedSync.ts), checked by `npm run verify:seed`, which replays
+the real upgrade from the committed bundle.
 
 ### Presets
 

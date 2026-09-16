@@ -4,6 +4,7 @@ import { db } from './db'
 import { makeId } from '../utils/id'
 import { countWords, estimateReadTimeSeconds } from '../utils/estimateReadTime'
 import { deriveTitle } from '../utils/textNormalize'
+import { planSeedSync, type SeedHistory, type SeedSyncResult } from './seedSync'
 
 function nowIso(): string {
   return new Date().toISOString()
@@ -94,34 +95,19 @@ export async function duplicateScript(id: string): Promise<Script | undefined> {
 }
 
 /**
- * Bulk-import bundled series episodes by their stable ids. Idempotent and
- * non-destructive: an episode already in the library (matched by id) is skipped,
- * so re-running never overwrites your edits, notes, or scroll position. Returns
- * how many NEW scripts were added.
- *
- * updatedAt is derived from each episode's production-book `seq` (earlier seq =
- * newer timestamp) so the library lists them in filming order out of the box.
+ * Bring the library in line with the bundled series, keyed by each episode's
+ * stable id. The decision of what may be touched lives in ./seedSync; this only
+ * reads the library and writes the plan back.
  */
-export async function importSeedEpisodes(episodes: PofEpisode[]): Promise<number> {
-  const existing = new Set((await db.scripts.toArray()).map((s) => s.id))
-  // Fixed base so timestamps are deterministic across imports/devices; seq 1 sorts to the top.
-  const base = Date.parse('2025-01-01T00:00:00.000Z')
-  const toAdd: Script[] = []
-  for (const ep of episodes) {
-    if (existing.has(ep.id)) continue
-    const ts = new Date(base - ep.seq * 60000).toISOString()
-    toAdd.push({
-      id: ep.id,
-      title: ep.title,
-      body: ep.body,
-      createdAt: ts,
-      updatedAt: ts,
-      lastPositionPx: 0,
-      estimatedReadTimeSeconds: estimateReadTimeSeconds(ep.body, 120),
-    })
-  }
-  if (toAdd.length > 0) await db.scripts.bulkPut(toAdd)
-  return toAdd.length
+export async function syncSeedEpisodes(
+  episodes: PofEpisode[],
+  seedVersion: string,
+  history: SeedHistory,
+): Promise<SeedSyncResult> {
+  const existing = new Map((await db.scripts.toArray()).map((s) => [s.id, s]))
+  const { puts, result } = planSeedSync(episodes, existing, seedVersion, history)
+  if (puts.length > 0) await db.scripts.bulkPut(puts)
+  return result
 }
 
 export function scriptStats(body: string, wpm: number) {

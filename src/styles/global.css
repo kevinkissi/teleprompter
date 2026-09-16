@@ -999,3 +999,18 @@ input[type='range'] {
     transition: none;
   }
 }
+
+/* A waiting build, offered in the Library only — never over the reading screen. */
+.update-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 16px 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--accent-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elev);
+  font-size: 14px;
+}
