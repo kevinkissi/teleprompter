@@ -25,7 +25,10 @@ export const DEFAULT_CONFIG: PrompterConfig = {
   colors: { background: '#000000', text: '#ffffff' },
   lens: {
     enabled: false,
-    sizeMm: 70,
+    // 40mm, not 70: the phone is 73mm wide, so a 70mm window was 98% of the
+    // screen and enabling it looked like nothing had happened. This one is
+    // visibly a window, and the presets go tighter still.
+    sizeMm: 40,
     showBorder: true,
     edgeFade: true,
   },
@@ -65,7 +68,7 @@ export const WORD_SPACING_MAX = 32
 export const PREROLL_MIN = 0
 export const PREROLL_MAX = 90
 
-export const LENS_MIN_MM = 30
+export const LENS_MIN_MM = 20
 export const LENS_MAX_MM = 120
 
 /** Seconds jumped by rewind / forward controls. */

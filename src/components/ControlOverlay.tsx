@@ -19,7 +19,7 @@ import {
   WPM_STEP_SMALL,
 } from '../state/defaults'
 import { TRANSFORM_MODES, findTransformMode } from '../utils/transform'
-import { LENS_PRESETS } from '../utils/lens'
+import { LENS_PRESETS, LENS_QUICK_PRESET_IDS } from '../utils/lens'
 import { RemotePanel } from './RemotePanel'
 import { useRemoteStore } from '../remote/remoteStore'
 
@@ -142,7 +142,7 @@ function QuickSettings({ onClose }: { onClose: () => void }) {
             onChange={(e) => setLens({ sizeMm: Number(e.target.value) })}
           />
           <div className="wrap" style={{ marginTop: 6 }}>
-            {LENS_PRESETS.slice(0, 3).map((p) => (
+            {LENS_PRESETS.filter((p) => LENS_QUICK_PRESET_IDS.includes(p.id)).map((p) => (
               <button
                 key={p.id}
                 type="button"
