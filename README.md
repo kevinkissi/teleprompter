@@ -66,6 +66,9 @@ only for the ~2-second pairing handshake, then traffic is peer-to-peer). The lap
 Restart from top, jump Top/End, seek ±5 s, change speed & font, and pick which script to prompt; it
 mirrors the phone's live status (script, play state, progress, remaining time, WPM). Commands invoke
 the exact same store actions/scroll controller as the on-device controls, so behaviour is identical.
+The protocol also carries the **lens window** (on/off and size in millimetres, via `lensEnabled` /
+`lensSize` / `lensDelta`, with `lensEnabled` + `lensSizeMm` in the streamed state): Studio OS on the
+Mac sizes the window live from its Teleprompter tab. The in-app laptop remote does not expose it yet.
 PeerJS loads as its own lazy chunk, so the offline-first core is unaffected. Transport lives in
 [src/remote/](src/remote/); UI in `RemoteControl` / `RemotePanel` / `RemoteTab`.
 

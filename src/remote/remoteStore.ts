@@ -3,6 +3,7 @@ import type { RemoteCommand, RemoteState, WireMessage } from './protocol'
 import { startController, startHost, type TransportHandle, type TransportStatus } from './transport'
 import { useAppStore } from '../state/appStore'
 import { scrollController } from '../state/scrollController'
+import { LENS_MAX_MM, LENS_MIN_MM, clamp } from '../state/defaults'
 
 export type RemoteRole = 'off' | 'host' | 'controller'
 export type RemoteStatus = 'idle' | 'connecting' | 'waiting' | 'connected' | 'disconnected' | 'error'
@@ -59,6 +60,8 @@ function buildState(): RemoteState {
     remainingSeconds: s.remainingSeconds,
     speedWpm: s.config.scroll.speedWpm,
     fontSizePx: s.config.typography.fontSizePx,
+    lensEnabled: s.config.lens.enabled,
+    lensSizeMm: s.config.lens.sizeMm,
     scripts: s.scripts.filter((x) => !x.archived).map((x) => ({ id: x.id, title: x.title })),
   }
 }
@@ -88,6 +91,11 @@ function publishState(force = false): void {
   }
   lastSentAt = now
   handle.send({ t: 'state', state: buildState() })
+}
+
+/** Millimetres off the wire → a whole number the phone's own slider could have produced. */
+function clampLensMm(mm: number): number {
+  return clamp(Math.round(mm), LENS_MIN_MM, LENS_MAX_MM)
 }
 
 /** Run a controller command on the phone, reusing the exact same actions as the local UI. */
@@ -139,6 +147,17 @@ function applyCommand(cmd: RemoteCommand): void {
       break
     case 'rotate':
       s.rotate(1)
+      break
+    // Lens window: same setLens the reader's own slider and switch call, so the
+    // window resizes live whether the reader is open or not.
+    case 'lensSize':
+      if (Number.isFinite(cmd.sizeMm)) s.setLens({ sizeMm: clampLensMm(cmd.sizeMm) })
+      break
+    case 'lensDelta':
+      if (Number.isFinite(cmd.delta)) s.setLens({ sizeMm: clampLensMm(s.config.lens.sizeMm + cmd.delta) })
+      break
+    case 'lensEnabled':
+      s.setLens({ enabled: cmd.enabled === true })
       break
   }
   publishState(true)
