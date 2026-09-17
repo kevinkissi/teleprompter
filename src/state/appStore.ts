@@ -475,12 +475,18 @@ export const useAppStore = create<AppState>()(
     {
       name: 'teleprompter-state',
       storage: createJSONStorage(() => localStorage),
-      version: 2,
-      // v2 added config.lens — backfill it for state persisted before the feature.
+      version: 3,
       migrate: (persisted, version) => {
         const s = persisted as { config?: Partial<PrompterConfig> } | undefined
+        // v2 added config.lens — backfill it for state persisted before the feature.
         if (s?.config && !s.config.lens && version < 2) {
           s.config.lens = { ...DEFAULT_CONFIG.lens }
+        }
+        // v3 made the lens window the default. `enabled: false` persisted before
+        // then is the OLD default, not a decision: the switch that could have
+        // turned it on did not respond to touch, so nobody ever chose either way.
+        if (s?.config?.lens && version < 3) {
+          s.config.lens.enabled = true
         }
         return s as unknown as AppState
       },

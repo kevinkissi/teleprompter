@@ -1,11 +1,35 @@
+import { useState } from 'react'
 import { useAppStore } from '../state/appStore'
 import { Row, Toggle } from './ui'
 import { db } from '../storage/db'
+import { POF_SEED_VERSION } from '../data/pof'
+import { checkForUpdate } from '../pwa/swUpdate'
 
 export function SettingsPanel() {
   const settings = useAppStore((s) => s.settings)
   const setSettings = useAppStore((s) => s.setSettings)
   const hydrate = useAppStore((s) => s.hydrate)
+  const [updateNote, setUpdateNote] = useState<string | null>(null)
+  const [checking, setChecking] = useState(false)
+
+  async function checkNow() {
+    setChecking(true)
+    setUpdateNote('Checking…')
+    try {
+      const result = await checkForUpdate()
+      setUpdateNote(
+        result === 'applied'
+          ? 'Updating…'
+          : result === 'none'
+            ? `You're on the latest build (${__BUILD_ID__}).`
+            : 'Updates run through the installed app; open it from the Home Screen.',
+      )
+    } catch {
+      setUpdateNote('Could not check — are you online?')
+    } finally {
+      setChecking(false)
+    }
+  }
 
   async function clearAll() {
     if (!confirm('Delete ALL scripts and presets from this device? This cannot be undone.')) return
@@ -72,6 +96,21 @@ export function SettingsPanel() {
           Clear all data
         </button>
       </Row>
+
+      <div className="section-title">App</div>
+      <Row
+        label={`Build ${__BUILD_ID__}`}
+        desc={`Scripts ${POF_SEED_VERSION.slice(0, 6)} · built ${new Date(__BUILD_TIME__).toLocaleString()}`}
+      >
+        <button className="btn" onClick={checkNow} disabled={checking} type="button">
+          {checking ? 'Checking…' : 'Check for update'}
+        </button>
+      </Row>
+      {updateNote && (
+        <p className="field__hint" role="status" style={{ marginTop: 4 }}>
+          {updateNote}
+        </p>
+      )}
 
       <p className="field__hint" style={{ marginTop: 24 }}>
         Teleprompter · works offline · add to Home Screen from the Share menu in Safari for a

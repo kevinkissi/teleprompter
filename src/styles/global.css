@@ -643,19 +643,24 @@ input[type='range'] {
 /* Toggle switch */
 .switch {
   position: relative;
-  width: 52px;
-  height: 30px;
+  /* 72×48: the WHOLE button is the tap target, past the 44px a thumb needs.
+     The art is drawn 8px inside it, at 56×32, and the negative margins hand
+     that 8px back to the layout, so nothing looks or sits any bigger. */
+  width: 72px;
+  height: 48px;
+  margin: -8px -8px -8px 0;
   flex: none;
-}
-.switch input {
-  opacity: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  /* No double-tap-to-zoom wait, no 300ms click delay — a switch answers now. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 .switch__track {
   position: absolute;
-  inset: 0;
+  inset: 8px;
   background: var(--bg-elev-2);
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -664,8 +669,8 @@ input[type='range'] {
 }
 .switch__thumb {
   position: absolute;
-  top: 3px;
-  left: 3px;
+  top: 12px;
+  left: 12px;
   width: 24px;
   height: 24px;
   border-radius: 50%;
@@ -675,13 +680,18 @@ input[type='range'] {
     background 0.15s ease;
   pointer-events: none;
 }
-.switch input:checked ~ .switch__track {
+.switch[aria-checked='true'] .switch__track {
   background: rgba(56, 189, 248, 0.25);
   border-color: var(--accent);
 }
-.switch input:checked ~ .switch__thumb {
-  transform: translateX(22px);
+.switch[aria-checked='true'] .switch__thumb {
+  transform: translateX(24px);
   background: var(--accent);
+}
+.switch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -6px;
+  border-radius: 999px;
 }
 
 /* ---------- Presets ---------- */

@@ -24,7 +24,9 @@ export const DEFAULT_CONFIG: PrompterConfig = {
   },
   colors: { background: '#000000', text: '#ffffff' },
   lens: {
-    enabled: false,
+    // On by default: the window is the reason the app is on a beam-splitter at
+    // all. It stays adjustable, and the switch turns it OFF.
+    enabled: true,
     // 40mm, not 70: the phone is 73mm wide, so a 70mm window was 98% of the
     // screen and enabling it looked like nothing had happened. This one is
     // visibly a window, and the presets go tighter still.

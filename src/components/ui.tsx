@@ -1,5 +1,16 @@
 import type { ReactNode } from 'react'
 
+/**
+ * A switch that answers to a thumb.
+ *
+ * It used to be a native checkbox hidden under the track. iOS Safari never
+ * resizes a native checkbox — `width: 100%` is ignored without
+ * `appearance: none` — so the only thing that could take a tap was an invisible
+ * ~20px box in one corner, and the track it sat under had `pointer-events:
+ * none`. A mouse never noticed: a click anywhere on a <label> activates its
+ * input. A finger did. A <button> is a tap target everywhere, on its whole
+ * area, with no heuristics about what counts as clickable.
+ */
 export function Toggle({
   checked,
   onChange,
@@ -10,16 +21,17 @@ export function Toggle({
   label?: string
 }) {
   return (
-    <label className="switch">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        aria-label={label}
-      />
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      className="switch"
+      onClick={() => onChange(!checked)}
+    >
       <span className="switch__track" />
       <span className="switch__thumb" />
-    </label>
+    </button>
   )
 }
 

@@ -16,6 +16,7 @@ type Listener = (ready: boolean) => void
 let updateReady = false
 const listeners = new Set<Listener>()
 let updateServiceWorker: ((reloadPage?: boolean) => Promise<void>) | null = null
+let registration: ServiceWorkerRegistration | null = null
 
 /** How often a running app re-checks for a new build. */
 const UPDATE_CHECK_MS = 30 * 60 * 1000
@@ -27,12 +28,13 @@ export function initServiceWorker(): void {
       updateReady = true
       for (const l of listeners) l(true)
     },
-    onRegisteredSW(_swUrl, registration) {
-      if (!registration) return
+    onRegisteredSW(_swUrl, reg) {
+      if (!reg) return
+      registration = reg
       // A phone can keep this app alive for days. Without a poll the only update
       // check is a cold start, so a deploy can sit unnoticed indefinitely.
       const check = () => {
-        if (document.visibilityState === 'visible') void registration.update()
+        if (document.visibilityState === 'visible') void reg.update()
       }
       setInterval(check, UPDATE_CHECK_MS)
       document.addEventListener('visibilitychange', check)
@@ -52,7 +54,71 @@ export function isUpdateReady(): boolean {
   return updateReady
 }
 
+let reloading = false
+
+/**
+ * Hand the page to a worker that has finished installing, then reload once it
+ * is in control.
+ *
+ * This owns the reload rather than leaning on the plugin's. That one is wired
+ * up only inside its "waiting" event handler, so a worker found by asking for
+ * an update — a beat before that handler has run — would take the SKIP_WAITING,
+ * activate, claim the page (clientsClaim) and leave it running the old bundle
+ * with a new worker underneath. Measured, not theorised: that is exactly what
+ * the end-to-end test caught.
+ */
+function activate(worker: ServiceWorker): Promise<void> {
+  return new Promise((resolve) => {
+    const done = () => {
+      if (reloading) return
+      reloading = true
+      resolve()
+      window.location.reload()
+    }
+    navigator.serviceWorker.addEventListener('controllerchange', done, { once: true })
+    worker.postMessage({ type: 'SKIP_WAITING' })
+    // If the claim never reaches this page but the worker moved on anyway,
+    // reload rather than sit on the old bundle.
+    setTimeout(() => {
+      if (registration?.waiting !== worker) done()
+    }, 4000)
+  })
+}
+
 /** Activate the waiting build and reload. Only ever called from the Library. */
 export async function applyUpdate(): Promise<void> {
+  const waiting = registration?.waiting
+  if (waiting) return activate(waiting)
   await updateServiceWorker?.(true)
+}
+
+export type UpdateCheck = 'applied' | 'none' | 'unsupported'
+
+/**
+ * Look for a new build right now and, if one is waiting, switch to it.
+ *
+ * This is the path that does not depend on a banner having appeared: a reload
+ * only ever ASKS the browser to check, and a worker found waiting is offered,
+ * not applied. Someone tapping "Check for update" wants the other half too.
+ */
+export async function checkForUpdate(): Promise<UpdateCheck> {
+  if (!registration) return 'unsupported'
+  await registration.update().catch(() => undefined)
+  const waiting = registration.waiting ?? (await waitForWaiting(registration, 6000))
+  if (!waiting) return 'none'
+  await activate(waiting)
+  return 'applied'
+}
+
+/** A new worker downloads and installs asynchronously; give it a moment to land. */
+function waitForWaiting(reg: ServiceWorkerRegistration, timeoutMs: number): Promise<ServiceWorker | null> {
+  return new Promise((resolve) => {
+    const started = Date.now()
+    const tick = () => {
+      if (reg.waiting) return resolve(reg.waiting)
+      if (Date.now() - started > timeoutMs) return resolve(null)
+      setTimeout(tick, 250)
+    }
+    tick()
+  })
 }

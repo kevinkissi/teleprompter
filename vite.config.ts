@@ -3,7 +3,16 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
+// Stamped into the bundle so Settings can show which build is running — the
+// question that has to be answered before any "is the update on the phone" one.
+const builtAt = new Date()
+const buildId = builtAt.toISOString().slice(0, 16).replace(/[-:T]/g, '')
+
 export default defineConfig({
+  define: {
+    __BUILD_ID__: JSON.stringify(buildId),
+    __BUILD_TIME__: JSON.stringify(builtAt.toISOString()),
+  },
   // Relative base so the app also works when hosted from a sub-path (e.g. GitHub Pages).
   base: './',
   plugins: [
