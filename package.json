@@ -12,6 +12,8 @@
     "episodes": "node scripts/sync-episodes.mjs",
     "episodes:check": "node scripts/sync-episodes.mjs --check",
     "verify:seed": "node scripts/verify-seed-sync.mjs",
+    "verify:slides": "node scripts/verify-slides.mjs",
+    "verify:protocol": "node scripts/verify-protocol.mjs",
     "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {

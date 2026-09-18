@@ -14,6 +14,11 @@ import {
   MARGIN_MAX,
   MARGIN_MIN,
   NUDGE_SECONDS,
+  SLIDE_GAP_MAX,
+  SLIDE_GAP_MIN,
+  SLIDE_GAP_STEP,
+  SLIDE_WPM_MAX,
+  SLIDE_WPM_MIN,
   WPM_MAX,
   WPM_MIN,
   WPM_STEP_SMALL,
@@ -22,6 +27,7 @@ import { TRANSFORM_MODES, findTransformMode } from '../utils/transform'
 import { LENS_PRESETS, LENS_QUICK_PRESET_IDS } from '../utils/lens'
 import { RemotePanel } from './RemotePanel'
 import { useRemoteStore } from '../remote/remoteStore'
+import { SLIDE_FONT_MIN } from '../utils/slides'
 
 interface CtrlProps {
   icon: IconName
@@ -56,15 +62,84 @@ function QuickSettings({ onClose }: { onClose: () => void }) {
   const setTypography = useAppStore((s) => s.setTypography)
   const setTransformState = useAppStore((s) => s.setTransformState)
   const setLens = useAppStore((s) => s.setLens)
+  const setSlideConfig = useAppStore((s) => s.setSlideConfig)
+  const slideFontPx = useAppStore((s) => s.slideFontPx)
+  const wholeSentencePct = useAppStore((s) => s.wholeSentencePct)
+  const slideCount = useAppStore((s) => s.slides.length)
   const activeMode = findTransformMode(config.transform)
+  const inSlides = config.slide.mode === 'slide'
 
   const quickModes = TRANSFORM_MODES.slice(0, 4) // Normal, Mirror L/R, Mirror T/B, Flip Both
 
   return (
     <div className="quick" role="group" aria-label="Quick settings">
+      {inSlides && (
+        <>
+          <div className="field">
+            <div className="field__label">
+              <span>Slide pace</span>
+              <span className="field__value">{config.slide.wpm} WPM</span>
+            </div>
+            <input
+              type="range"
+              aria-label="Slide pace in words per minute"
+              min={SLIDE_WPM_MIN}
+              max={SLIDE_WPM_MAX}
+              step={5}
+              value={config.slide.wpm}
+              onChange={(e) => setSlideConfig({ wpm: Number(e.target.value) })}
+            />
+            <div className="field__hint">
+              How long each slide is shown, from its own word count.
+            </div>
+          </div>
+
+          <div className="field">
+            <div className="field__label">
+              <span>Pause between slides</span>
+              <span className="field__value">{config.slide.gapSeconds.toFixed(1)}s</span>
+            </div>
+            <input
+              type="range"
+              aria-label="Pause before advancing, in seconds"
+              min={SLIDE_GAP_MIN}
+              max={SLIDE_GAP_MAX}
+              step={SLIDE_GAP_STEP}
+              value={config.slide.gapSeconds}
+              onChange={(e) => setSlideConfig({ gapSeconds: Number(e.target.value) })}
+            />
+          </div>
+
+          <div className="field">
+            <div className="field__label">
+              <span>Slide text size</span>
+              <span className="field__value">
+                {config.slide.fontPx === 0 ? `auto · ${slideFontPx}px` : `${config.slide.fontPx}px`}
+              </span>
+            </div>
+            <input
+              type="range"
+              aria-label="Slide text size in pixels"
+              min={SLIDE_FONT_MIN - 2}
+              max={FONT_MAX}
+              step={2}
+              value={config.slide.fontPx === 0 ? slideFontPx : config.slide.fontPx}
+              onChange={(e) => {
+                const v = Number(e.target.value)
+                setSlideConfig({ fontPx: v < SLIDE_FONT_MIN ? 0 : v })
+              }}
+            />
+            <div className="field__hint">
+              Drag fully left for automatic. At this size {slideCount} slides ·{' '}
+              {wholeSentencePct}% of them are whole sentences.
+            </div>
+          </div>
+        </>
+      )}
+
       <div className="field">
         <div className="field__label">
-          <span>Speed</span>
+          <span>{inSlides ? 'Scroll speed' : 'Speed'}</span>
           <span className="field__value">{config.scroll.speedWpm} WPM</span>
         </div>
         <input
@@ -199,6 +274,14 @@ export function ControlOverlay() {
   const rotateDeg = useAppStore((s) => s.config.transform.rotateDeg)
   const lensEnabled = useAppStore((s) => s.config.lens.enabled)
   const lensSizeMm = useAppStore((s) => s.config.lens.sizeMm)
+  const mode = useAppStore((s) => s.config.slide.mode)
+  const advance = useAppStore((s) => s.config.slide.advance)
+  const slideIndex = useAppStore((s) => s.slideIndex)
+  const slideCount = useAppStore((s) => s.slides.length)
+  const slideRemaining = useAppStore((s) => s.slideRemainingSeconds)
+  const setPlaybackMode = useAppStore((s) => s.setPlaybackMode)
+  const setSlideAdvance = useAppStore((s) => s.setSlideAdvance)
+  const stepSlide = useAppStore((s) => s.stepSlide)
   const title = useAppStore((s) => {
     const id = s.currentScriptId
     return s.scripts.find((x) => x.id === id)?.title ?? 'Teleprompter'
@@ -212,6 +295,9 @@ export function ControlOverlay() {
   const toggleLens = useAppStore((s) => s.toggleLens)
   const closeReader = useAppStore((s) => s.closeReader)
 
+  const inSlides = mode === 'slide'
+  const autoAdvance = inSlides && advance === 'auto'
+
   return (
     <div className={'overlay' + (controlsVisible ? '' : ' overlay--hidden')}>
       <div className="overlay__top">
@@ -219,7 +305,12 @@ export function ControlOverlay() {
           <Icon name="back" />
         </button>
         <div className="overlay__title">{title}</div>
-        <div className="overlay__time">-{formatDuration(remainingSeconds)}</div>
+        <div className="overlay__time">
+          {inSlides
+            ? `${slideCount === 0 ? 0 : slideIndex + 1} / ${slideCount}` +
+              (autoAdvance && slideRemaining > 0 ? ` · ${Math.ceil(slideRemaining)}s` : '')
+            : `-${formatDuration(remainingSeconds)}`}
+        </div>
       </div>
 
       <div className="overlay__bottom">
@@ -231,31 +322,69 @@ export function ControlOverlay() {
         {quickOpen && <QuickSettings onClose={() => setQuickOpen(false)} />}
 
         <div className="progress" aria-hidden="true">
-          <div className="progress__bar" style={{ width: `${Math.round(progress * 100)}%` }} />
+          <div
+            className="progress__bar"
+            style={{
+              width: `${Math.round(
+                (inSlides && slideCount > 1 ? slideIndex / (slideCount - 1) : progress) * 100,
+              )}%`,
+            }}
+          />
         </div>
 
         <div className="ctrl-row">
-          <Ctrl icon="top" label="Top" onClick={() => scrollController.current.jumpTop()} />
+          <Ctrl icon="top" label={inSlides ? 'First' : 'Top'} onClick={() => scrollController.current.jumpTop()} />
           <Ctrl
             icon="rewind"
-            label={`-${NUDGE_SECONDS}s`}
-            onClick={() => scrollController.current.nudgeSeconds(-NUDGE_SECONDS)}
+            label={inSlides ? 'Previous' : `-${NUDGE_SECONDS}s`}
+            onClick={() =>
+              inSlides ? stepSlide(-1) : scrollController.current.nudgeSeconds(-NUDGE_SECONDS)
+            }
           />
-          <Ctrl
-            icon={playing ? 'pause' : 'play'}
-            label={countingDown ? 'Cancel' : playing ? 'Pause' : 'Play'}
-            onClick={togglePlay}
-            primary
-          />
-          <Ctrl
-            icon="forward"
-            label={`+${NUDGE_SECONDS}s`}
-            onClick={() => scrollController.current.nudgeSeconds(NUDGE_SECONDS)}
-          />
-          <Ctrl icon="bottom" label="End" onClick={() => scrollController.current.jumpBottom()} />
+          {/* Manual advancement has nothing running to play or pause, so Next is
+              the primary action. Auto keeps Play/Pause — which freezes the
+              script and nothing else; the take carries on recording. */}
+          {inSlides && !autoAdvance ? (
+            <Ctrl icon="forward" label="Next" onClick={() => stepSlide(1)} primary />
+          ) : (
+            <Ctrl
+              icon={playing ? 'pause' : 'play'}
+              label={countingDown ? 'Cancel' : playing ? 'Pause' : 'Play'}
+              onClick={togglePlay}
+              primary
+            />
+          )}
+          {/* In manual advancement Next IS the primary button above, so this
+              slot would just repeat it. */}
+          {!(inSlides && !autoAdvance) && (
+            <Ctrl
+              icon="forward"
+              label={inSlides ? 'Next' : `+${NUDGE_SECONDS}s`}
+              onClick={() =>
+                inSlides ? stepSlide(1) : scrollController.current.nudgeSeconds(NUDGE_SECONDS)
+              }
+            />
+          )}
+          <Ctrl icon="bottom" label={inSlides ? 'Last' : 'End'} onClick={() => scrollController.current.jumpBottom()} />
         </div>
 
         <div className="ctrl-row">
+          <Ctrl
+            icon="list"
+            label={inSlides ? 'Slides' : 'Scroll'}
+            onClick={() => setPlaybackMode(inSlides ? 'continuous' : 'slide')}
+            active={inSlides}
+            ariaLabel={inSlides ? 'Switch to continuous scrolling' : 'Switch to slide mode'}
+          />
+          {inSlides && (
+            <Ctrl
+              icon={autoAdvance ? 'play' : 'chevron'}
+              label={autoAdvance ? 'Auto' : 'Manual'}
+              onClick={() => setSlideAdvance(autoAdvance ? 'manual' : 'auto')}
+              active={autoAdvance}
+              ariaLabel="Slide advancement"
+            />
+          )}
           <Ctrl
             icon="minus"
             label="Slower"

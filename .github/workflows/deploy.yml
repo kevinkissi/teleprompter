@@ -25,6 +25,11 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # The segmenter decides what the reader sees on set, so it does not ship
+      # without proving it still leaves the script alone. verify:protocol runs
+      # the halves it can see here; the Studio OS mirrors need that repo.
+      - run: npm run verify:slides
+      - run: npm run verify:protocol
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:

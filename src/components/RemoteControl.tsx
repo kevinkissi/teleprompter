@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAppStore } from '../state/appStore'
 import { useRemoteStore } from '../remote/remoteStore'
 import { Icon, type IconName } from './Icon'
@@ -21,6 +21,12 @@ export function RemoteControl() {
 
   const [code, setCode] = useState('')
   const [showScripts, setShowScripts] = useState(false)
+  /** The slide we last asked for, held until the phone confirms it. Without
+   *  this, two quick taps both compute their target from the same echoed index
+   *  and the second one is a no-op. */
+  const [pendingSlide, setPendingSlide] = useState<number | null>(null)
+  const pendingSince = useRef(0)
+  const echoedIndex = rs?.slideIndex ?? -1
 
   const connected = role === 'controller' && status === 'connected'
 
@@ -28,6 +34,18 @@ export function RemoteControl() {
     disconnect()
     closeRemote()
   }
+
+  // Release the optimistic index once the phone agrees — or after a second, so
+  // a dropped command can never wedge the display on a slide it never reached.
+  useEffect(() => {
+    if (pendingSlide === null) return
+    if (echoedIndex === pendingSlide) {
+      setPendingSlide(null)
+      return
+    }
+    const t = setTimeout(() => setPendingSlide(null), 1000)
+    return () => clearTimeout(t)
+  }, [pendingSlide, echoedIndex])
 
   if (!connected) {
     return (
@@ -80,8 +98,24 @@ export function RemoteControl() {
   const playing = rs?.playing ?? false
   const inReader = rs?.view === 'reader'
   const title = rs?.currentTitle || (inReader ? 'Untitled' : 'No script open')
+  // '' means the phone predates Slide Mode — not a mode, so the controls stay
+  // hidden rather than sending commands it would silently drop.
+  const slidesSupported = (rs?.protocolVersion ?? 1) >= 3 && rs?.playbackMode !== ''
+  const inSlides = rs?.playbackMode === 'slide'
+  const autoAdvance = inSlides && rs?.slideAdvance === 'auto'
+  const slideCount = rs?.slideCount ?? 0
+  const slideIndex = pendingSlide ?? echoedIndex
 
   const cmd = (c: RemoteCommand) => () => send(c)
+
+  /** Absolute, like the desktop's — a relative step can never drift. */
+  const goSlide = (index: number) => () => {
+    if (slideCount <= 0) return
+    const next = Math.min(Math.max(0, index), slideCount - 1)
+    setPendingSlide(next)
+    pendingSince.current = Date.now()
+    send({ action: 'gotoSlide', index: next })
+  }
 
   const Key = ({
     icon,
@@ -160,13 +194,22 @@ export function RemoteControl() {
                       ? 'At the end'
                       : 'Paused'
                 : 'On the library screen'}
-              {inReader &&
-                ` · ${rs?.speedWpm ?? 0} WPM · -${formatDuration(rs?.remainingSeconds ?? 0)}`}
+              {inReader && inSlides
+                ? ` · slide ${slideIndex + 1} of ${slideCount}`
+                : inReader
+                  ? ` · ${rs?.speedWpm ?? 0} WPM · -${formatDuration(rs?.remainingSeconds ?? 0)}`
+                  : ''}
             </div>
             <div className="progress" aria-hidden="true">
               <div
                 className="progress__bar"
-                style={{ width: `${Math.round((rs?.progress ?? 0) * 100)}%` }}
+                style={{
+                  width: `${Math.round(
+                    (inSlides && slideCount > 1
+                      ? slideIndex / (slideCount - 1)
+                      : (rs?.progress ?? 0)) * 100,
+                  )}%`,
+                }}
               />
             </div>
           </div>
@@ -177,18 +220,75 @@ export function RemoteControl() {
             </p>
           )}
 
+          {slidesSupported && (
+            <div className="remote__grid remote__grid--four">
+              <Key
+                icon="list"
+                label={inSlides ? 'Slides' : 'Scroll'}
+                onClick={cmd({ action: 'setPlaybackMode', mode: inSlides ? 'continuous' : 'slide' })}
+              />
+              {inSlides && (
+                <Key
+                  icon={autoAdvance ? 'play' : 'chevron'}
+                  label={autoAdvance ? 'Auto' : 'Manual'}
+                  onClick={cmd({
+                    action: 'setSlideAdvance',
+                    advance: autoAdvance ? 'manual' : 'auto',
+                  })}
+                />
+              )}
+              {/* Freezes the script only. Whatever is recording keeps recording. */}
+              <Key
+                icon="pause"
+                label={rs?.prompterPaused ? 'Resume' : 'Hold'}
+                onClick={cmd({ action: rs?.prompterPaused ? 'resumePrompter' : 'pausePrompter' })}
+                disabled={!inReader}
+              />
+            </div>
+          )}
+
           <div className="remote__grid">
-            <Key icon="top" label="Top" onClick={cmd({ action: 'top' })} disabled={!inReader} />
-            <Key icon="rewind" label="-5s" onClick={cmd({ action: 'nudge', seconds: -5 })} disabled={!inReader} />
             <Key
-              icon={playing ? 'pause' : 'play'}
-              label={playing ? 'Pause' : 'Play'}
-              onClick={cmd({ action: 'togglePlay' })}
-              variant="primary"
+              icon="top"
+              label={inSlides ? 'First' : 'Top'}
+              onClick={cmd({ action: 'top' })}
               disabled={!inReader}
             />
-            <Key icon="forward" label="+5s" onClick={cmd({ action: 'nudge', seconds: 5 })} disabled={!inReader} />
-            <Key icon="bottom" label="End" onClick={cmd({ action: 'bottom' })} disabled={!inReader} />
+            <Key
+              icon="rewind"
+              label={inSlides ? 'Prev' : '-5s'}
+              onClick={inSlides ? goSlide(slideIndex - 1) : cmd({ action: 'nudge', seconds: -5 })}
+              disabled={!inReader}
+            />
+            {inSlides && !autoAdvance ? (
+              <Key
+                icon="forward"
+                label="Next"
+                onClick={goSlide(slideIndex + 1)}
+                variant="primary"
+                disabled={!inReader}
+              />
+            ) : (
+              <Key
+                icon={playing ? 'pause' : 'play'}
+                label={playing ? 'Pause' : 'Play'}
+                onClick={cmd({ action: 'togglePlay' })}
+                variant="primary"
+                disabled={!inReader}
+              />
+            )}
+            <Key
+              icon="forward"
+              label={inSlides ? 'Next' : '+5s'}
+              onClick={inSlides ? goSlide(slideIndex + 1) : cmd({ action: 'nudge', seconds: 5 })}
+              disabled={!inReader}
+            />
+            <Key
+              icon="bottom"
+              label={inSlides ? 'Last' : 'End'}
+              onClick={cmd({ action: 'bottom' })}
+              disabled={!inReader}
+            />
           </div>
 
           <button

@@ -4,11 +4,14 @@ import type {
   AppSettings,
   Colors,
   LensWindow,
+  PlaybackMode,
   Preset,
   PrompterConfig,
   RotateDeg,
   Script,
   ScrollConfig,
+  SlideAdvance,
+  SlideConfig,
   TransformState,
   Typography,
 } from '../types'
@@ -18,6 +21,14 @@ import {
   DEFAULT_SETTINGS,
   FONT_MAX,
   FONT_MIN,
+  SLIDE_GAP_MAX,
+  SLIDE_GAP_MIN,
+  SLIDE_MIN_SECONDS,
+  SLIDE_READ_IN_BASE,
+  SLIDE_READ_IN_MAX,
+  SLIDE_READ_IN_PER_WORD,
+  SLIDE_WPM_MAX,
+  SLIDE_WPM_MIN,
   WPM_MAX,
   WPM_MIN,
   clamp,
@@ -28,6 +39,7 @@ import { getMeta, setMeta } from '../storage/db'
 import type { SeedSyncResult } from '../storage/seedSync'
 import * as presetsRepo from '../storage/presetsRepository'
 import { nextRotation } from '../utils/transform'
+import { slideIndexForOffset, type Slide } from '../utils/slides'
 import { POF_EPISODES, POF_SEED_HISTORY, POF_SEED_VERSION } from '../data/pof'
 
 /** meta key holding the bundled-episode version this library was last synced to. */
@@ -62,6 +74,34 @@ interface AppState {
   progress: number
   remainingSeconds: number
 
+  // --- Slide Mode runtime ---
+  /** The slide version of the current script. Derived from the SAME body the
+   *  continuous reader scrolls; segmentation never rewrites a word. */
+  slides: Slide[]
+  slideFontPx: number
+  wholeSentencePct: number
+  /** Reading position as a character offset into the body. The slide index is
+   *  derived from it, so changing the lens size mid-take re-segments without
+   *  ever losing your place. */
+  anchorOffset: number
+  slideIndex: number
+  /** Seconds left on this slide as of the last edge — not a running countdown.
+   *  See `slideRemainingSeconds` in remote/protocol.ts for why. */
+  slideRemainingSeconds: number
+  /** The teleprompter is frozen. Says nothing about camera or microphone: the
+   *  phone has no capture of its own, and on the Mac they are separate systems. */
+  prompterPaused: boolean
+  /** Studio OS reports a take is rolling. Drives the reader's indicator and
+   *  nothing else — the phone records nothing. */
+  recording: boolean
+  /** The prompter was running when the mode changed, so the engine that mounts
+   *  next should pick it up. Switching presentation mid-take must not leave the
+   *  reader stopped while the camera is still rolling. */
+  pendingResume: boolean
+  /** Per-slide display-time overrides, keyed `scriptId:bodyOffset` so an
+   *  override follows the words rather than a slide number that moves. */
+  slideSecondsOverrides: Record<string, number>
+
   // --- data lifecycle ---
   hydrate: () => Promise<void>
   refreshScripts: () => Promise<void>
@@ -89,6 +129,9 @@ interface AppState {
   setColors: (patch: Partial<Colors>) => void
   setLens: (patch: Partial<LensWindow>) => void
   toggleLens: () => void
+  setSlideConfig: (patch: Partial<SlideConfig>) => void
+  setPlaybackMode: (mode: PlaybackMode) => void
+  setSlideAdvance: (advance: SlideAdvance) => void
   adjustFont: (delta: number) => void
   adjustSpeed: (delta: number) => void
   toggleMirrorX: () => void
@@ -128,6 +171,23 @@ interface AppState {
   cancelCountdown: () => void
   setEnded: (ended: boolean) => void
   setProgress: (progress: number, remainingSeconds: number) => void
+
+  // --- Slide Mode ---
+  setSlides: (slides: Slide[], fontPx: number, wholeSentencePct: number) => void
+  gotoSlide: (index: number) => void
+  stepSlide: (delta: number) => void
+  setSlideSeconds: (index: number, seconds: number | null) => void
+  /** Display time for a slide: its own override, or read-in + speaking + pause. */
+  slideSecondsFor: (index: number) => number
+  setSlideRemaining: (seconds: number) => void
+  setPrompterPaused: (paused: boolean) => void
+  setRecording: (recording: boolean) => void
+  setPendingResume: (pending: boolean) => void
+}
+
+/** Key for a per-slide time override. Anchored to the words, not the number. */
+function overrideKey(scriptId: string | null, offset: number): string {
+  return `${scriptId ?? ''}:${offset}`
 }
 
 function upsertScriptLocal(scripts: Script[], script: Script): Script[] {
@@ -161,6 +221,17 @@ export const useAppStore = create<AppState>()(
       ended: false,
       progress: 0,
       remainingSeconds: 0,
+
+      slides: [],
+      slideFontPx: 0,
+      wholeSentencePct: 100,
+      anchorOffset: 0,
+      slideIndex: 0,
+      slideRemainingSeconds: 0,
+      prompterPaused: false,
+      recording: false,
+      pendingResume: false,
+      slideSecondsOverrides: {},
 
       async hydrate() {
         await presetsRepo.ensureDefaultPreset()
@@ -308,6 +379,27 @@ export const useAppStore = create<AppState>()(
       toggleLens() {
         get().setLens({ enabled: !get().config.lens.enabled })
       },
+      setSlideConfig(patch) {
+        set((s) => ({ config: { ...s.config, slide: { ...s.config.slide, ...patch } } }))
+        // Anything here can change how much text a slide holds, so the reader
+        // re-segments; the anchor keeps the reading position across it.
+        scrollController.current.recompute()
+      },
+      setPlaybackMode(mode) {
+        if (get().config.slide.mode === mode) return
+        // Switching presentation must never disturb a running take. It only
+        // touches prompter state — and if the prompter WAS running, the engine
+        // that mounts next picks it straight back up rather than leaving the
+        // reader stopped with the camera still rolling. A count-in counts as
+        // running: cancelling it silently would be the worst of both.
+        const live = get().playing || get().countingDown
+        if (live) scrollController.current.pause()
+        set({ pendingResume: live })
+        get().setSlideConfig({ mode })
+      },
+      setSlideAdvance(advance) {
+        get().setSlideConfig({ advance })
+      },
       adjustFont(delta) {
         set((s) => ({
           config: {
@@ -393,11 +485,20 @@ export const useAppStore = create<AppState>()(
           progress: 0,
           playing: false,
           countingDown: false,
+          // Slide Mode always opens on the first slide: a take starts at the
+          // top, and "continue from last position" is a scrolling idea.
+          slides: [],
+          anchorOffset: 0,
+          slideIndex: 0,
+          slideRemainingSeconds: 0,
+          prompterPaused: false,
         })
       },
       closeReader() {
         scrollController.current.pause()
-        set({ view: 'library', playing: false, countingDown: false })
+        // Don't trust the engine to have cleared these — the reader can close
+        // while no playback controller is installed at all.
+        set({ view: 'library', playing: false, countingDown: false, prompterPaused: false })
       },
       openRemote() {
         set({ view: 'remote' })
@@ -471,11 +572,96 @@ export const useAppStore = create<AppState>()(
       setProgress(progress, remainingSeconds) {
         set({ progress, remainingSeconds })
       },
+
+      setSlides(slides, fontPx, wholeSentencePct) {
+        // Re-derive the index from the character anchor rather than keeping the
+        // old number: the words you were about to say stay on screen even when
+        // the slide count changes underneath you.
+        const index = slideIndexForOffset(slides, get().anchorOffset)
+        set({ slides, slideFontPx: fontPx, wholeSentencePct, slideIndex: index })
+      },
+
+      gotoSlide(index) {
+        const { slides } = get()
+        if (slides.length === 0) return
+        const i = clamp(Math.round(index), 0, slides.length - 1)
+        set({
+          slideIndex: i,
+          anchorOffset: slides[i].start,
+          ended: i >= slides.length - 1 && get().ended,
+          slideRemainingSeconds: get().slideSecondsFor(i),
+        })
+      },
+
+      stepSlide(delta) {
+        const { slides, slideIndex } = get()
+        if (slides.length === 0) return
+        const next = slideIndex + Math.round(delta)
+        if (next >= slides.length) {
+          // Off the end: stop at the last slide and flag the script as finished,
+          // exactly as the scrolling reader does at the bottom. Only stop the
+          // engine when something was actually running — in manual advancement
+          // nothing is, and calling pause there would report the prompter as
+          // held when the reader simply reached the last slide.
+          set({ ended: true })
+          if (get().config.slide.advance === 'auto') scrollController.current.pause()
+          return
+        }
+        get().gotoSlide(next)
+      },
+
+      setSlideSeconds(index, seconds) {
+        const { slides, currentScriptId } = get()
+        const slide = slides[index]
+        if (!slide) return
+        const key = overrideKey(currentScriptId, slide.start)
+        set((s) => {
+          const next = { ...s.slideSecondsOverrides }
+          if (seconds === null || !Number.isFinite(seconds)) delete next[key]
+          else next[key] = clamp(seconds, 0.2, 120)
+          return { slideSecondsOverrides: next }
+        })
+        if (index === get().slideIndex) set({ slideRemainingSeconds: get().slideSecondsFor(index) })
+      },
+
+      slideSecondsFor(index) {
+        const { slides, config, currentScriptId, slideSecondsOverrides } = get()
+        const slide = slides[index]
+        if (!slide) return 0
+        const override = slideSecondsOverrides[overrideKey(currentScriptId, slide.start)]
+        if (override !== undefined) return override
+        const wpm = clamp(config.slide.wpm, SLIDE_WPM_MIN, SLIDE_WPM_MAX)
+        const speak = wpm > 0 ? (slide.words / wpm) * 60 : 0
+        // A slide gives you no peripheral preview of what is coming, so it has
+        // to pay for the glance that continuous scrolling gives you for free.
+        const readIn = Math.min(
+          SLIDE_READ_IN_MAX,
+          SLIDE_READ_IN_BASE + SLIDE_READ_IN_PER_WORD * slide.words,
+        )
+        const gap = clamp(config.slide.gapSeconds, SLIDE_GAP_MIN, SLIDE_GAP_MAX)
+        return Math.max(SLIDE_MIN_SECONDS, readIn + speak + gap)
+      },
+
+      setSlideRemaining(seconds) {
+        set({ slideRemainingSeconds: Math.max(0, seconds) })
+      },
+
+      setPrompterPaused(paused) {
+        set({ prompterPaused: paused })
+      },
+
+      setRecording(recording) {
+        set({ recording })
+      },
+
+      setPendingResume(pending) {
+        set({ pendingResume: pending })
+      },
     }),
     {
       name: 'teleprompter-state',
       storage: createJSONStorage(() => localStorage),
-      version: 3,
+      version: 4,
       migrate: (persisted, version) => {
         const s = persisted as { config?: Partial<PrompterConfig> } | undefined
         // v2 added config.lens — backfill it for state persisted before the feature.
@@ -488,6 +674,12 @@ export const useAppStore = create<AppState>()(
         if (s?.config?.lens && version < 3) {
           s.config.lens.enabled = true
         }
+        // v4 added Slide Mode. State persisted before it has no `slide` block;
+        // backfilling the default keeps such a device on Continuous, which is
+        // what it was already doing.
+        if (s?.config && !s.config.slide && version < 4) {
+          s.config.slide = { ...DEFAULT_CONFIG.slide }
+        }
         return s as unknown as AppState
       },
       partialize: (s) => ({
@@ -495,6 +687,11 @@ export const useAppStore = create<AppState>()(
         settings: s.settings,
         currentScriptId: s.currentScriptId,
         activePresetId: s.activePresetId,
+        // Keep the most recent hand-set slide times. Capped so a library of 180
+        // episodes can't grow this without bound.
+        slideSecondsOverrides: Object.fromEntries(
+          Object.entries(s.slideSecondsOverrides).slice(-200),
+        ),
       }),
     },
   ),

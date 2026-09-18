@@ -1,9 +1,18 @@
 import { create } from 'zustand'
-import type { RemoteCommand, RemoteState, WireMessage } from './protocol'
+import { PROTOCOL_VERSION, type RemoteCommand, type RemoteState, type WireMessage } from './protocol'
 import { startController, startHost, type TransportHandle, type TransportStatus } from './transport'
 import { useAppStore } from '../state/appStore'
 import { scrollController } from '../state/scrollController'
-import { LENS_MAX_MM, LENS_MIN_MM, clamp } from '../state/defaults'
+import {
+  LENS_MAX_MM,
+  LENS_MIN_MM,
+  SLIDE_GAP_MAX,
+  SLIDE_GAP_MIN,
+  SLIDE_WPM_MAX,
+  SLIDE_WPM_MIN,
+  clamp,
+} from '../state/defaults'
+import { slideText } from '../utils/slides'
 
 export type RemoteRole = 'off' | 'host' | 'controller'
 export type RemoteStatus = 'idle' | 'connecting' | 'waiting' | 'connected' | 'disconnected' | 'error'
@@ -49,7 +58,11 @@ function makeCode(): string {
 function buildState(): RemoteState {
   const s = useAppStore.getState()
   const current = s.scripts.find((x) => x.id === s.currentScriptId)
+  const body = current?.body ?? ''
+  const slide = s.slides[s.slideIndex]
+  const nextSlide = s.slides[s.slideIndex + 1]
   return {
+    protocolVersion: PROTOCOL_VERSION,
     view: s.view,
     currentScriptId: s.currentScriptId,
     currentTitle: current?.title ?? '',
@@ -62,6 +75,24 @@ function buildState(): RemoteState {
     fontSizePx: s.config.typography.fontSizePx,
     lensEnabled: s.config.lens.enabled,
     lensSizeMm: s.config.lens.sizeMm,
+    playbackMode: s.config.slide.mode,
+    slideAdvance: s.config.slide.advance,
+    slideIndex: s.slides.length > 0 ? s.slideIndex : -1,
+    slideCount: s.slides.length,
+    slideText: slide ? slideText(body, slide) : '',
+    nextSlideText: nextSlide ? slideText(body, nextSlide) : '',
+    slideContinues: slide?.continues ?? false,
+    slideSeconds: s.slides.length > 0 ? s.slideSecondsFor(s.slideIndex) : 0,
+    slideRemainingSeconds: s.slideRemainingSeconds,
+    slideSecondsOverridden:
+      slide !== undefined &&
+      s.slideSecondsOverrides[`${s.currentScriptId ?? ''}:${slide.start}`] !== undefined,
+    prompterPaused: s.prompterPaused,
+    slideFontPx: s.slideFontPx,
+    wholeSentencePct: s.wholeSentencePct,
+    slideWpm: s.config.slide.wpm,
+    slideGapSeconds: s.config.slide.gapSeconds,
+    recording: s.recording,
     scripts: s.scripts.filter((x) => !x.archived).map((x) => ({ id: x.id, title: x.title })),
   }
 }
@@ -97,6 +128,20 @@ function publishState(force = false): void {
 function clampLensMm(mm: number): number {
   return clamp(Math.round(mm), LENS_MIN_MM, LENS_MAX_MM)
 }
+
+/**
+ * Actions a controller can emit as fast as a key repeats. These publish through
+ * the 150ms limiter instead of forcing a send, so holding Next cannot turn into
+ * a burst of full state frames — the trailing edge still guarantees the final
+ * state of the burst is delivered.
+ */
+const HIGH_RATE_ACTIONS = new Set<RemoteCommand['action']>([
+  'gotoSlide',
+  'slideDelta',
+  'setSlideTiming',
+  'lensSize',
+  'lensDelta',
+])
 
 /** Run a controller command on the phone, reusing the exact same actions as the local UI. */
 function applyCommand(cmd: RemoteCommand): void {
@@ -159,8 +204,54 @@ function applyCommand(cmd: RemoteCommand): void {
     case 'lensEnabled':
       s.setLens({ enabled: cmd.enabled === true })
       break
+
+    // --- Slide Mode -------------------------------------------------------
+    // Presentation only. Nothing below can reach a camera or a microphone:
+    // the phone has no capture, and on the Mac these are sent by a controller
+    // that holds no reference to a recording object.
+    case 'setPlaybackMode':
+      if (cmd.mode === 'continuous' || cmd.mode === 'slide') s.setPlaybackMode(cmd.mode)
+      break
+    case 'setSlideAdvance':
+      if (cmd.advance === 'manual' || cmd.advance === 'auto') s.setSlideAdvance(cmd.advance)
+      break
+    case 'gotoSlide':
+      if (inReader && Number.isFinite(cmd.index)) s.gotoSlide(cmd.index)
+      break
+    case 'slideDelta':
+      if (inReader && Number.isFinite(cmd.delta)) s.stepSlide(cmd.delta)
+      break
+    case 'setSlideTiming': {
+      const patch: { wpm?: number; gapSeconds?: number } = {}
+      if (Number.isFinite(cmd.wpm)) {
+        patch.wpm = clamp(Math.round(cmd.wpm as number), SLIDE_WPM_MIN, SLIDE_WPM_MAX)
+      }
+      if (Number.isFinite(cmd.gapSeconds)) {
+        patch.gapSeconds =
+          Math.round(clamp(cmd.gapSeconds as number, SLIDE_GAP_MIN, SLIDE_GAP_MAX) * 10) / 10
+      }
+      if (Object.keys(patch).length > 0) s.setSlideConfig(patch)
+      break
+    }
+    case 'setSlideSeconds':
+      if (Number.isFinite(cmd.index)) {
+        s.setSlideSeconds(cmd.index, Number.isFinite(cmd.seconds) ? (cmd.seconds as number) : null)
+      }
+      break
+    // Freeze / resume the teleprompter ONLY. `sc.pause()` stops the scroll loop
+    // or the slide timer, whichever stage is mounted; neither knows anything
+    // about capture, which is why recording is unaffected by definition.
+    case 'pausePrompter':
+      if (inReader) sc.pause()
+      break
+    case 'resumePrompter':
+      if (inReader) sc.play()
+      break
+    case 'setRecording':
+      s.setRecording(cmd.recording === true)
+      break
   }
-  publishState(true)
+  publishState(!HIGH_RATE_ACTIONS.has(cmd.action))
 }
 
 export const useRemoteStore = create<RemoteStoreState>((set, get) => ({

@@ -16,6 +16,8 @@ storage), and **vite-plugin-pwa** (offline service worker + installable manifest
 npm install
 npm run dev        # local dev server
 npm run build      # type-check + production build into dist/
+npm run verify:slides     # segmentation never changes the script (180 episodes)
+npm run verify:protocol   # remote protocol in lockstep with Studio OS
 npm run preview    # serve the production build (add --host to reach it from your phone)
 npm run icons      # regenerate the PWA icons (dependency-free PNG generator)
 ```
@@ -45,6 +47,74 @@ npm run icons      # regenerate the PWA icons (dependency-free PNG generator)
 - Auto-hiding controls while scrolling (tap to reveal); the control overlay is **never mirrored**,
   only the reading text and countdown are.
 
+### Two playback modes
+
+The same script, presented two ways. Switching between them changes nothing about
+the script and nothing about recording.
+
+**Continuous** — the scrolling reader the app has always had, at the set WPM.
+**Pause teleprompter** freezes the script where it is; **Resume** carries on from
+the same position. Speed, font and everything else work as before.
+
+**Slides** — the script is divided into small sections and shown one at a time
+inside the lens frame. Advance them yourself (**Previous** / **Next**), or let
+them advance automatically: each slide is held for its own word count at the
+slide **pace**, plus a **pause before advancing**, plus a short read-in allowance
+(a slide gives you no peripheral preview of the next line, which continuous
+scrolling does). Any single slide's time can be overridden by hand from Studio OS.
+Pausing automatic advancement freezes the slide and nothing else.
+
+#### How the script is divided
+
+Segmentation only ever decides where the boundaries go. It never rewrites,
+reorders or drops a word — slides are half-open spans of the original body that
+abut and cover it exactly, so concatenating them reproduces the script byte for
+byte. `npm run verify:slides` asserts that over all 180 bundled episodes at seven
+lens sizes, along with: no boundary inside a word, a number or a clock time;
+emphasis carried across any break; determinism; and that a reading position
+always resolves to exactly one slide.
+
+Boundaries are chosen strongest-first: a paragraph break, then a `[director cue]`
+line (a written rest, which gets a card of its own), then a sentence end. Only
+when a *single sentence cannot physically fit the window* is it continued onto the
+next slide, and then at the most natural pause it contains — em dash, ellipsis,
+colon, comma, word gap — never mid-word, never inside a number, and preferring not
+to end on a function word. A continued slide is marked so you can see the thought
+carries over.
+
+#### Lens size is the real constraint
+
+The amount of text per slide is measured against the actual reading box, with the
+actual font. That box is small: at the default 40 mm lens on an iPhone 17 Pro Max
+it is 241 × 241 CSS px. Measured over the bundled series:
+
+| lens | type size | slides/episode | words/slide | whole sentences |
+| --- | --- | --- | --- | --- |
+| off | 53px | 24.7 | 11.6 | 62% |
+| 82 / 67 mm | 37px | 25.0 | 11.5 | 61% |
+| 49 mm | 29px | 27.9 | 10.3 | 50% |
+| **40 mm** (default) | 28px | 37.9 | 7.6 | 36% |
+| 30 mm | 28px | 67.3 | 4.3 | 15% |
+| 20 mm | 28px | 143.8 | 2.0 | 3% |
+
+`npm run verify:slides` prints this table, so it is measured rather than quoted.
+
+So "never cut a sentence" and "legible through a beam-splitter" are geometrically
+incompatible below about 49 mm — there is no algorithm that fixes a 241 px box.
+The reader picks legibility, splits at the best pause available, and **tells you
+the number before you roll**: the Slides card in Studio OS shows the chosen type
+size and what percentage of slides are whole sentences at the current lens, and
+says so in orange when it drops below half. Opening the lens window from 40 mm to
+67 mm costs nothing physically — the window only has to cover where your eyes
+travel — and takes whole sentences from 36% to 61%.
+
+Type size is chosen automatically (largest size at which most sentences still fit,
+floored at 28 px) and can be set by hand from the reader's **More** panel. A slide
+that still overflows is shrunk a step at a time, measured against the real box,
+down to a 24 px floor. Slide Mode does not apply the lens edge fade: the fade
+softens text *entering and leaving* a scroll window, and on a static centred slide
+it would only dim the first and last line.
+
 ### Lens window (eyeline over the camera)
 
 A one‑tap **Lens** mode confines the script to a centered square roughly the size of the camera's
@@ -69,6 +139,21 @@ the exact same store actions/scroll controller as the on-device controls, so beh
 The protocol also carries the **lens window** (on/off and size in millimetres, via `lensEnabled` /
 `lensSize` / `lensDelta`, with `lensEnabled` + `lensSizeMm` in the streamed state): Studio OS on the
 Mac sizes the window live from its Teleprompter tab. The in-app laptop remote does not expose it yet.
+Protocol 3 adds **Slide Mode** to the same channel: playback mode, slide index and
+count, the current and next slide's text, manual/auto advancement, slide timing,
+per-slide time overrides, teleprompter pause/resume, and the recording state
+Studio OS pushes so the reader can show a take is rolling. `RemoteState` carries a
+`protocolVersion`, and every new field uses a sentinel that cannot be a real value
+(`playbackMode: ''`, `slideIndex: -1`, `slideCount: 0`), so an older phone is
+detected rather than misread — Studio OS disables the controls that phone cannot
+honour instead of sending commands it would silently drop.
+
+The protocol is declared once in [src/remote/protocol.ts](src/remote/protocol.ts)
+and mirrored by hand in two files in the Studio OS repo. Nothing mechanical
+connects them, so `npm run verify:protocol` does: it fails if `RemoteState`,
+`controller.js`'s `forwardState`, and Swift's `applyState` ever disagree, or if a
+command exists that nothing handles.
+
 PeerJS loads as its own lazy chunk, so the offline-first core is unaffected. Transport lives in
 [src/remote/](src/remote/); UI in `RemoteControl` / `RemotePanel` / `RemoteTab`.
 
@@ -183,15 +268,26 @@ src/
   components/    PromptDisplay, ControlOverlay, ReaderView, Countdown,
                  ScriptList, ScriptEditor, SettingsPanel, PresetManager,
                  CalibrationView, LibraryView, Icon, ui (primitives)
-  hooks/         useScrollEngine, useKeyboardShortcuts, useAutoHideControls,
-                 useWakeLock, useOrientation, useGestures
+  hooks/         useScrollEngine, useSlideEngine, useKeyboardShortcuts,
+                 useAutoHideControls, useWakeLock, useOrientation, useGestures
   state/         appStore (Zustand + persist), scrollController, defaults
   storage/       db (Dexie), scriptsRepository, presetsRepository
-  utils/         transform, estimateReadTime, textNormalize, id
+  utils/         transform, estimateReadTime, textNormalize, id,
+                 sentences + slides + slideFit (Slide Mode segmentation)
   types.ts       Script / Preset / AppSettings / PrompterConfig
 scripts/
   generate-icons.mjs   dependency-free PNG icon generator
+  verify-slides.mjs    segmentation invariants over the whole bundled series
+  verify-protocol.mjs  remote protocol lockstep across both repos
 ```
+
+**Playback engine design.** Whichever mode is active installs its own engine into
+the shared `scrollController` handle, so Play, Pause, Next, Top and End mean
+something in both modes and no remote command is ever a silent no-op. When no
+engine is mounted the handle holds an *idle* controller that still clears the
+store's playback flags — a no-op pause was the one genuinely dangerous case,
+because a `playing` or `countingDown` that nothing can resolve makes Studio OS
+stop starting the prompter on later takes.
 
 **Scroll engine design.** The authoritative pixel position lives in a `ref` and is written straight
 to the DOM via `translate3d` on the scroller element — scrolling never triggers a React render.

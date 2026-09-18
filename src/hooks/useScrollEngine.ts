@@ -1,6 +1,6 @@
 import { useEffect, useRef, type RefObject } from 'react'
 import { useAppStore } from '../state/appStore'
-import { scrollController } from '../state/scrollController'
+import { idleController, scrollController } from '../state/scrollController'
 import { clamp } from '../state/defaults'
 import { countWords } from '../utils/estimateReadTime'
 
@@ -164,13 +164,22 @@ export function useScrollEngine(refs: ScrollEngineRefs): void {
         useAppStore.getState().setEnded(false)
       }
       useAppStore.getState().setPlaying(true)
+      useAppStore.getState().setPrompterPaused(false)
       lastTsRef.current = null
       rafRef.current = requestAnimationFrame(frame)
     }
 
     function pause(): void {
       stopLoop()
-      useAppStore.getState().setPlaying(false)
+      const s = useAppStore.getState()
+      s.setPlaying(false)
+      // "Held" is a prompter state, not a Slide Mode one: the desktop's
+      // Pause/Resume has to read correctly in both modes.
+      s.setPrompterPaused(true)
+      // A count-in is not the scroll loop, so stopping the loop does not stop
+      // it. Without this, holding the prompter during the count-in lets it
+      // start scrolling a couple of seconds later anyway.
+      if (s.countingDown) s.cancelCountdown()
       pushProgress(true)
       persistPosition(true)
     }
@@ -215,6 +224,13 @@ export function useScrollEngine(refs: ScrollEngineRefs): void {
     applyTransform()
     pushProgress(true)
 
+    // The mode changed while the prompter was running: carry it over rather
+    // than leaving the reader stopped with a take still rolling.
+    if (useAppStore.getState().pendingResume) {
+      useAppStore.getState().setPendingResume(false)
+      play()
+    }
+
     // Recompute when the text block or the reading window changes size
     // (font, rotation, orientation, or toggling/resizing the lens window).
     const ro = new ResizeObserver(() => recompute())
@@ -230,16 +246,10 @@ export function useScrollEngine(refs: ScrollEngineRefs): void {
       ro.disconnect()
       window.removeEventListener('resize', onResize)
       window.removeEventListener('orientationchange', onResize)
-      scrollController.current = {
-        play: () => {},
-        pause: () => {},
-        jumpTop: () => {},
-        jumpBottom: () => {},
-        nudgeSeconds: () => {},
-        recompute: () => {},
-        refreshProgress: () => {},
-        getProgress: () => 0,
-      }
+      // Hand the shared handle back to the idle controller rather than to a set
+      // of silent no-ops: a pause arriving in the gap between this unmount and
+      // the next engine's mount must still clear the store's playback flags.
+      scrollController.current = idleController
     }
     // Refs are stable for the reader's lifetime; set up the engine once.
     // eslint-disable-next-line react-hooks/exhaustive-deps

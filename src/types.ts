@@ -53,6 +53,32 @@ export interface LensWindow {
   edgeFade: boolean
 }
 
+/** How the prompter presents the script. Two presentation formats of the SAME
+ *  script body — never two different scripts. */
+export type PlaybackMode = 'continuous' | 'slide'
+/** In Slide Mode: who moves to the next slide. */
+export type SlideAdvance = 'manual' | 'auto'
+
+/**
+ * Slide Mode settings. The script body is untouched by all of this — these only
+ * decide where the section boundaries fall and how long each section is shown.
+ */
+export interface SlideConfig {
+  mode: PlaybackMode
+  advance: SlideAdvance
+  /**
+   * Speaking pace used to derive each slide's display time, in words per minute.
+   * Separate from `scroll.speedWpm`, which is calibrated for a moving read line
+   * and is far slower than a delivered take: the bundled scripts declare ~90s
+   * for ~280 words, i.e. around 185 wpm.
+   */
+  wpm: number
+  /** Pause added after a slide's speaking time before it advances, in seconds. */
+  gapSeconds: number
+  /** Type size for slides. 0 = choose automatically from the lens window size. */
+  fontPx: number
+}
+
 /** The full live prompter configuration. A Preset is a saved snapshot of this. */
 export interface PrompterConfig {
   transform: TransformState
@@ -60,6 +86,7 @@ export interface PrompterConfig {
   scroll: ScrollConfig
   colors: Colors
   lens: LensWindow
+  slide: SlideConfig
 }
 
 export interface Preset extends PrompterConfig {

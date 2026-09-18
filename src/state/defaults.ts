@@ -34,6 +34,17 @@ export const DEFAULT_CONFIG: PrompterConfig = {
     showBorder: true,
     edgeFade: true,
   },
+  slide: {
+    // Continuous is what the app has always done, so that is what it still does
+    // until you choose otherwise.
+    mode: 'continuous',
+    advance: 'manual',
+    // 165 wpm: the bundled scripts declare ~90s for ~280 spoken words, which is
+    // ~185 wpm delivered. 165 leaves a little room rather than chasing you.
+    wpm: 165,
+    gapSeconds: 0.6,
+    fontPx: 0, // 0 = automatic, sized to the lens window
+  },
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -72,6 +83,21 @@ export const PREROLL_MAX = 90
 
 export const LENS_MIN_MM = 20
 export const LENS_MAX_MM = 120
+
+// --- Slide Mode ---
+export const SLIDE_WPM_MIN = 60
+export const SLIDE_WPM_MAX = 300
+export const SLIDE_WPM_STEP = 5
+export const SLIDE_GAP_MIN = 0
+export const SLIDE_GAP_MAX = 5
+export const SLIDE_GAP_STEP = 0.1
+/** Floor on a slide's display time, so a two-word slide is never a flash. */
+export const SLIDE_MIN_SECONDS = 1.2
+/** Time to find your place on a fresh slide, before the first word. Continuous
+ *  scrolling gives you the next lines in peripheral vision; a slide does not. */
+export const SLIDE_READ_IN_BASE = 0.25
+export const SLIDE_READ_IN_PER_WORD = 0.05
+export const SLIDE_READ_IN_MAX = 1.2
 
 /** Seconds jumped by rewind / forward controls. */
 export const NUDGE_SECONDS = 5

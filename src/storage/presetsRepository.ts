@@ -100,6 +100,9 @@ export function presetToConfig(preset: Preset): PrompterConfig {
     colors: preset.colors,
     // Presets stored before the lens feature won't have a lens field.
     lens: preset.lens ?? DEFAULT_CONFIG.lens,
+    // Likewise for presets saved before Slide Mode — they load as Continuous,
+    // which is what they were saved as.
+    slide: preset.slide ?? DEFAULT_CONFIG.slide,
   })
 }
 
@@ -111,5 +114,6 @@ export function structuredCloneConfig(config: PrompterConfig): PrompterConfig {
     scroll: { ...config.scroll },
     colors: { ...config.colors },
     lens: { ...(config.lens ?? DEFAULT_CONFIG.lens) },
+    slide: { ...(config.slide ?? DEFAULT_CONFIG.slide) },
   }
 }
