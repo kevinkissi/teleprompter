@@ -1,6 +1,7 @@
 import {
   Fragment,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -9,7 +10,8 @@ import {
 import { useAppStore } from '../state/appStore'
 import { useSlideEngine } from '../hooks/useSlideEngine'
 import { cueText, isCueParagraph, parseInline } from '../utils/prompterFormat'
-import { SLIDE_FONT_HARD_MIN, slideText } from '../utils/slides'
+import { SLIDE_FONT_HARD_MIN, SLIDE_FONT_WORD_FIT_MIN, slideText } from '../utils/slides'
+import { CUE_SIZE_FACTOR, canvasMeasurer, maxSizeForWholeWords, slideBoxFor } from '../utils/slideFit'
 
 /**
  * Shrink ladder for the rare slide the segmenter could not fit — a single
@@ -18,6 +20,42 @@ import { SLIDE_FONT_HARD_MIN, slideText } from '../utils/slides'
  * your line on a beam-splitter, so this is a rescue, not a layout strategy.
  */
 const SHRINK_LADDER = [1, 0.9, 0.8, 0.72]
+
+/**
+ * The canvas width model runs about 1% optimistic against real layout — kerning
+ * and letter-spacing are applied slightly differently — so the size it picks is
+ * held just inside the column rather than exactly at it.
+ */
+const WIDTH_SAFETY = 0.97
+
+/**
+ * Width of the widest single rendered word, measured in place.
+ *
+ * A Range over the word in its own text node gets the font that word is actually
+ * drawn with, including the larger, heavier `**emphasis**` runs that a single
+ * probe font would under-measure. If a word ever DID break across lines its
+ * range would span them and come back at least a column wide, so this catches
+ * that too.
+ */
+function widestRenderedWord(root: HTMLElement): number {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+  const range = document.createRange()
+  let widest = 0
+  let node = walker.nextNode()
+  while (node) {
+    const text = node.textContent ?? ''
+    const re = /\S+/g
+    let m: RegExpExecArray | null
+    while ((m = re.exec(text)) !== null) {
+      range.setStart(node, m.index)
+      range.setEnd(node, m.index + m[0].length)
+      const w = range.getBoundingClientRect().width
+      if (w > widest) widest = w
+    }
+    node = walker.nextNode()
+  }
+  return widest
+}
 
 /**
  * One section of the script, centred in the lens window.
@@ -48,10 +86,33 @@ export function SlideStage({ layerRef }: { layerRef: RefObject<HTMLDivElement | 
   const text = slide ? slideText(body, slide) : ''
   const isCue = slide?.kind === 'cue'
   const base = fontPx > 0 ? fontPx : typo.fontSizePx
+  const startEm = slide?.startEm ?? false
+  const endEm = slide?.endEm ?? false
 
-  // The measured backstop. The segmenter fits every slide before it exists, but
-  // it MODELS the layout rather than performing it — so check the real box and
-  // step down if the browser disagrees.
+  const fitTypo = useMemo(
+    () => ({
+      fontSizePx: typo.fontSizePx,
+      lineHeight: typo.lineHeight,
+      fontWeight: typo.fontWeight,
+      letterSpacingPx: typo.letterSpacingPx,
+      wordSpacingPx: typo.wordSpacingPx,
+      allCaps: typo.allCaps,
+      dyslexiaFont: typo.dyslexiaFont,
+    }),
+    [typo],
+  )
+
+  // The measured backstop, in two parts.
+  //
+  // HEIGHT: the segmenter fits every slide before it exists, but it MODELS the
+  // layout rather than performing it, so check the real box and step down if the
+  // browser disagrees.
+  //
+  // WIDTH: words are never hyphenated and never split, so a word wider than the
+  // column has nowhere to go — it would hang off the side of the lens window and
+  // be clipped. Rather than break it, shrink this slide until the longest word
+  // fits on one line. Width scales linearly with size, so the largest size that
+  // works is arithmetic, not a search.
   //
   // The chosen size is held in state, not written straight to the node: the same
   // element's font-size is React-controlled, so a re-render for any other reason
@@ -63,25 +124,63 @@ export function SlideStage({ layerRef }: { layerRef: RefObject<HTMLDivElement | 
     if (!el || !layer) return
     const budget = layer.clientHeight
     const probe = (size: number) => {
-      el.style.fontSize = `${isCue ? size * 0.5 : size}px`
+      el.style.fontSize = `${isCue ? size * CUE_SIZE_FACTOR : size}px`
       return el.scrollHeight <= budget
     }
+
     let chosen = Math.round(base)
     for (const step of SHRINK_LADDER) {
       chosen = Math.max(SLIDE_FONT_HARD_MIN, Math.round(base * step))
       if (probe(chosen)) break
     }
-    // Leave the winning size applied rather than clearing the property: React
-    // only rewrites an inline style when the rendered value changes, so clearing
-    // it here would drop the size entirely and the slide would render at the
-    // browser default.
+
+    // Now make sure every word fits the column whole.
+    const box = slideBoxFor(layer.clientWidth, layer.clientHeight, typo.marginXPercent)
+    const measure = canvasMeasurer(fitTypo)
+    const cap = maxSizeForWholeWords(text, box, measure, { startEm, endEm })
+    // A cue renders at half size, so its words allow twice the nominal size.
+    const sizeCap = isCue ? cap / CUE_SIZE_FACTOR : cap
+    if (Number.isFinite(sizeCap) && sizeCap * WIDTH_SAFETY < chosen) {
+      chosen = Math.max(SLIDE_FONT_WORD_FIT_MIN, Math.floor(sizeCap * WIDTH_SAFETY))
+    }
     probe(chosen)
+
+    // Belt and braces, against real layout rather than the model. Scale straight
+    // to what the measurement says instead of stepping, so one pass is enough
+    // even when the overshoot is large.
+    const cs = getComputedStyle(el)
+    const column =
+      el.clientWidth - parseFloat(cs.paddingLeft || '0') - parseFloat(cs.paddingRight || '0')
+    let guard = 4
+    let widest = widestRenderedWord(el)
+    while (widest > column && chosen > SLIDE_FONT_WORD_FIT_MIN && guard-- > 0) {
+      const next = Math.max(
+        SLIDE_FONT_WORD_FIT_MIN,
+        Math.floor(chosen * Math.min(0.99, (column / widest) * WIDTH_SAFETY)),
+      )
+      if (next >= chosen) break
+      chosen = next
+      probe(chosen)
+      widest = widestRenderedWord(el)
+    }
+
     setFitPx((prev) => (prev === chosen ? prev : chosen))
-  }, [base, isCue, slideIndex, text, layerRef, typo.lineHeight, typo.marginXPercent])
+  }, [
+    base,
+    isCue,
+    slideIndex,
+    text,
+    layerRef,
+    fitTypo,
+    typo.lineHeight,
+    typo.marginXPercent,
+    startEm,
+    endEm,
+  ])
 
   const size = fitPx > 0 ? fitPx : base
   const style: CSSProperties = {
-    fontSize: `${isCue ? size * 0.5 : size}px`,
+    fontSize: `${isCue ? size * CUE_SIZE_FACTOR : size}px`,
     lineHeight: isCue ? 1.3 : typo.lineHeight,
     fontWeight: typo.fontWeight,
     textAlign: typo.textAlign,
@@ -104,8 +203,7 @@ export function SlideStage({ layerRef }: { layerRef: RefObject<HTMLDivElement | 
   }
 
   const paragraphs = text.split(/\n{2,}/)
-  let em = slide?.startEm ?? false
-  const endEm = slide?.endEm ?? false
+  let em = startEm
 
   return (
     <div className="slide-stage">

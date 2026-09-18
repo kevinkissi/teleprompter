@@ -106,14 +106,34 @@ the number before you roll**: the Slides card in Studio OS shows the chosen type
 size and what percentage of slides are whole sentences at the current lens, and
 says so in orange when it drops below half. Opening the lens window from 40 mm to
 67 mm costs nothing physically — the window only has to cover where your eyes
-travel — and takes whole sentences from 36% to 61%.
+travel — and takes whole sentences from 36% to 62%.
 
-Type size is chosen automatically (largest size at which most sentences still fit,
-floored at 28 px) and can be set by hand from the reader's **More** panel. A slide
-that still overflows is shrunk a step at a time, measured against the real box,
-down to a 24 px floor. Slide Mode does not apply the lens edge fade: the fade
-softens text *entering and leaving* a scroll window, and on a static centred slide
-it would only dim the first and last line.
+#### Words are never split
+
+A slide never hyphenates and never breaks a word across lines. A word that does
+not fit the space left on its line moves to the next one whole.
+
+That has a consequence worth stating: a word wider than the *column* has nowhere
+to go, and would hang off the side of the lens window and be clipped. So when one
+turns up, that slide is shown a little smaller — enough for its longest word to
+fit on one line, and no smaller. This is the one size decision with no legibility
+floor, because the alternatives are hyphenating the word or losing it, and a
+briefly smaller line you can read beats half a word you cannot.
+
+It stays rare because the automatic type size is capped so 99% of the script's
+words fit the column outright; only genuine outliers shrink their slide. Measured
+over the series: 0% of slides at 67 mm, 2% at 40 mm, 5% with the lens off, rising
+to 13% at 30 mm where the window is already down to four words a slide.
+`npm run verify:slides` asserts the guarantee itself — that at the size each
+slide actually renders at, every word fits its column whole.
+
+Type size is chosen automatically — the largest at which most sentences still fit
+and 99% of the script's words fit the column, floored at 28 px — and can be set by
+hand from the reader's **More** panel. A slide that still overflows is shrunk a
+step at a time, measured against the real box, down to a 24 px floor. Slide Mode
+does not apply the lens edge fade: the fade softens text *entering and leaving* a
+scroll window, and on a static centred slide it would only dim the first and last
+line.
 
 ### Lens window (eyeline over the camera)
 

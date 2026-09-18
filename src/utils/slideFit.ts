@@ -126,10 +126,13 @@ export function wordsOf(source: string, startEm = false, endEm?: boolean): Word[
 /**
  * Height in px that `source` occupies when wrapped to `box.contentW`.
  *
- * Greedy wrapping, matching what the browser does for `overflow-wrap: anywhere`:
- * a word wider than the whole column simply consumes as many lines as it needs
- * rather than overflowing sideways. A line holding emphasis is 1.06x taller,
- * because the taller glyphs set the line box.
+ * Greedy wrapping, matching what the browser does for slides: words are never
+ * hyphenated and never split, so one that does not fit the remaining space moves
+ * WHOLE to the next line. A word too wide for the column at all still occupies
+ * exactly one line — it overflows sideways rather than wrapping, which is why
+ * `fits` also checks `widestWordWidth` and the renderer shrinks the slide until
+ * that word fits. A line holding emphasis is 1.06x taller, because the taller
+ * glyphs set the line box.
  */
 export function layoutHeight(
   source: string,
@@ -161,10 +164,10 @@ export function layoutHeight(
   for (const word of words) {
     const w = measure.width(word.text, sizePx, word.em)
     if (w > colW) {
-      // Wider than the column: the browser breaks it across lines.
+      // Wider than the column. Nothing splits it, so it sits alone on one line
+      // and overflows; the width check below is what actually catches this.
       closeLine()
-      const rows = Math.ceil(w / colW)
-      height += lineBox * rows * (word.em ? EM_SIZE_FACTOR : 1)
+      height += lineBox * (word.em ? EM_SIZE_FACTOR : 1)
       continue
     }
     const advance = lineOpen ? space + w : w
@@ -183,7 +186,36 @@ export function layoutHeight(
   return height
 }
 
-/** Does `source` fit the box at `sizePx`? */
+/**
+ * Width of the widest single word, in px, at `sizePx`. Width scales linearly
+ * with font size, so measuring once tells you the largest size at which the
+ * word still fits a column: `sizePx * contentW / widestWordWidth(...)`.
+ */
+export function widestWordWidth(
+  source: string,
+  sizePx: number,
+  measure: TextMeasurer,
+  opts: { startEm?: boolean; endEm?: boolean } = {},
+): number {
+  let widest = 0
+  for (const word of wordsOf(source, opts.startEm, opts.endEm)) {
+    const w = measure.width(word.text, sizePx, word.em)
+    if (w > widest) widest = w
+  }
+  return widest
+}
+
+/**
+ * Does `source` fit the box at `sizePx`? HEIGHT only, deliberately.
+ *
+ * Width is not a segmentation question. A word wider than the column stays too
+ * wide however the text around it is divided, so folding width in here just
+ * drives the splitter to cut and cut and never succeed — measured, it took the
+ * 30mm deck from 67 slides an episode to 77, and ended a fifth of them on a
+ * dangling function word. The only thing that can fix an over-wide word is a
+ * smaller size, so that is where it is fixed: `maxSizeForWholeWords`, applied
+ * per slide by the renderer.
+ */
 export function fits(
   source: string,
   sizePx: number,
@@ -193,6 +225,22 @@ export function fits(
   opts: { startEm?: boolean; endEm?: boolean } = {},
 ): boolean {
   return layoutHeight(source, sizePx, box, typo, measure, opts) <= box.usableH - FIT_SAFETY_PX
+}
+
+/**
+ * The largest size at which every word in `source` fits the column on its own.
+ * `Infinity` when there is nothing to constrain.
+ */
+export function maxSizeForWholeWords(
+  source: string,
+  box: FitBox,
+  measure: TextMeasurer,
+  opts: { startEm?: boolean; endEm?: boolean } = {},
+): number {
+  const PROBE = 100
+  const widest = widestWordWidth(source, PROBE, measure, opts)
+  if (widest <= 0) return Infinity
+  return (PROBE * box.contentW) / widest
 }
 
 /**

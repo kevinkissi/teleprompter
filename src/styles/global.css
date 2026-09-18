@@ -863,11 +863,15 @@ input[type='range'] {
 .slide-stage__text {
   width: 100%;
   white-space: pre-wrap;
-  /* A word wider than the window wraps with a visible hyphen rather than being
-     chopped, so a tight lens never looks like the script was cut. */
-  overflow-wrap: anywhere;
-  hyphens: auto;
-  -webkit-hyphens: auto;
+  /* A word is never hyphenated and never split across lines. If it does not fit
+     on the line it is on, the whole word moves to the next one. A word too wide
+     for the column at all is handled by shrinking THAT slide until it fits (see
+     SlideStage) — you read a smaller line, never half a word. */
+  overflow-wrap: normal;
+  word-break: normal;
+  line-break: strict;
+  hyphens: none;
+  -webkit-hyphens: none;
 }
 /* The capacity model measures lines, not block margins — so there are none. */
 .slide-stage__text p {

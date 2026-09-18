@@ -36,6 +36,7 @@ import {
   cueLayoutHeight,
   fits,
   layoutHeight,
+  wordsOf,
   type FitBox,
   type FitTypography,
   type TextMeasurer,
@@ -69,11 +70,35 @@ export interface SlideDeck {
 export const SLIDE_FONT_MIN = 28
 /** Absolute floor for the render-time shrink that rescues an outlier slide. */
 export const SLIDE_FONT_HARD_MIN = 24
+/**
+ * Keeping a word whole has NO legibility floor, only this sanity bound.
+ *
+ * Every other size decision stops at a readable minimum, because the thing it
+ * trades away is worth less than legibility. This one trades away a whole word:
+ * the only ways to make an over-wide word fit a column are to hyphenate it, to
+ * let it run off the side of the lens window, or to make the slide smaller — and
+ * the first two mean the reader does not get the word at all. So a slide shrinks
+ * as far as it must. Measured over the bundled series that is 0.2% of slides at
+ * 67mm and 2% at 40mm; it only becomes common below 30mm, where the window is
+ * already down to a few words a slide and the reader is told so before rolling.
+ */
+export const SLIDE_FONT_WORD_FIT_MIN = 1
 /** Step of the font ladder. Discrete on purpose: a continuous search would make
  *  the slide count wobble on sub-pixel noise. */
 export const SLIDE_FONT_STEP = 2
 /** Aim for this share of sentences landing whole on a slide. */
 export const WHOLE_SENTENCE_TARGET = 0.8
+/**
+ * Share of the script's WORDS that must fit the column at the deck size.
+ *
+ * Words are never split, so one wider than the column forces its slide to shrink
+ * on its own. That is the right rescue for a rare outlier and the wrong default
+ * for a whole deck: type that changes size every few slides is what makes you
+ * lose your line on a beam-splitter. Capping the deck size here means only the
+ * genuine outliers shrink — with the lens open it takes slides that need it from
+ * 13% to a handful.
+ */
+export const WORD_FIT_TARGET = 0.99
 /** Never strand fewer than this many words on a continuation slide. */
 const MIN_TAIL_WORDS = 3
 /** Only consider a break in the last 45% of what fits, so a strong-but-early
@@ -390,6 +415,22 @@ export function planFont(
   }
   if (sentences.length === 0) return { fontPx: ceiling, wholeSentencePct: 100 }
 
+  // The largest size at which WORD_FIT_TARGET of the script's words still fit
+  // the column on one line. Widths scale with size, so one pass over the words
+  // at a probe size answers it.
+  const PROBE = 100
+  const widths: number[] = []
+  for (const sp of sentences) {
+    for (const w of wordsOf(body.slice(sp.start, sp.end))) {
+      widths.push(measure.width(w.text, PROBE, w.em))
+    }
+  }
+  widths.sort((a, b) => a - b)
+  const quantile = widths.length
+    ? widths[Math.min(widths.length - 1, Math.floor(widths.length * WORD_FIT_TARGET))]
+    : 0
+  const widthCeiling = quantile > 0 ? Math.floor((PROBE * box.contentW) / quantile) : ceiling
+
   const share = (f: number): number => {
     let ok = 0
     for (const s of sentences) {
@@ -401,8 +442,9 @@ export function planFont(
   // Smaller type fits more, so scan down and take the first size that clears the
   // target. The ladder is stepped, so the floor is tried explicitly at the end
   // rather than being skipped when the range isn't a whole number of steps.
+  const start = Math.max(SLIDE_FONT_MIN, Math.min(ceiling, widthCeiling))
   let lastPct = 0
-  for (let f = ceiling; f > SLIDE_FONT_MIN; f -= SLIDE_FONT_STEP) {
+  for (let f = start; f > SLIDE_FONT_MIN; f -= SLIDE_FONT_STEP) {
     lastPct = share(f)
     if (lastPct >= WHOLE_SENTENCE_TARGET) {
       return { fontPx: f, wholeSentencePct: Math.round(lastPct * 100) }

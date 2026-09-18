@@ -11,7 +11,10 @@
 //   3. TOKEN EDGE   — no slide boundary lands inside a word or a number.
 //   4. EMPHASIS     — a boundary inside a **span** is always flagged startEm,
 //                     so the phrase keeps its weight across the break.
-//   5. SENTENCES    — reports how many slides begin mid-sentence, per lens.
+//   5. WHOLE WORDS  — no word is ever hyphenated or split across lines: at the
+//                     size each slide actually renders at, every word fits the
+//                     column on its own.
+//   6. SENTENCES    — reports how many slides begin mid-sentence, per lens.
 //
 // The segmenter takes an injected text measurer, so this runs in plain Node with
 // no DOM — same convention as verify-seed-sync.mjs, compiled with the repo's own
@@ -54,7 +57,7 @@ const format = await bundle(path.join(REPO, 'src/utils/prompterFormat.ts'), 'for
 const lens = await bundle(path.join(REPO, 'src/utils/lens.ts'), 'lens.mjs')
 
 const { segmentScript, planFont, paragraphSpans, slideIndexForOffset } = slides
-const { slideBoxFor, EM_SIZE_FACTOR } = fit
+const { slideBoxFor, EM_SIZE_FACTOR, maxSizeForWholeWords, widestWordWidth } = fit
 const { emphasisSpans, insideSpan } = sentences
 const { parseInline, isCueParagraph, cueText } = format
 
@@ -331,6 +334,80 @@ check(
   renderFails === 0,
   'the slides render exactly what the scrolling reader renders',
   renderExamples.join(' | '),
+)
+
+// WHOLE WORDS — the guarantee the CSS gives up when it stops hyphenating. A word
+// too wide for the column has nowhere to go, so the renderer shrinks that slide
+// until it fits; this asserts such a size always exists above the floor, and
+// reports how often and how far the shrink actually bites.
+const SHRINK_LADDER = [1, 0.9, 0.8, 0.72]
+const HARD_MIN = 24
+const WORD_FIT_MIN = 1
+let unfittable = 0
+const perLens = []
+const wordExamples = []
+for (const lensCase of LENSES) {
+  let shrunk = 0
+  let totalSlides = 0
+  let smallest = Infinity
+  for (const ep of POF_EPISODES) {
+    const deck = segmentScript(ep.body, { box: lensCase.box, typo: TYPO, measure })
+    for (const sl of deck.slides) {
+      const text = ep.body.slice(sl.start, sl.end).trim()
+      if (!text) continue
+      totalSlides++
+      const isCue = sl.kind === 'cue'
+      // Mirror SlideStage: height ladder first, then the width cap.
+      let size = Math.max(HARD_MIN, Math.round(deck.fontPx * SHRINK_LADDER[SHRINK_LADDER.length - 1]))
+      for (const step of SHRINK_LADDER) {
+        const candidate = Math.max(HARD_MIN, Math.round(deck.fontPx * step))
+        const opts = { startEm: sl.startEm, endEm: sl.endEm }
+        const h = isCue
+          ? fit.cueLayoutHeight(text, candidate, lensCase.box, TYPO, measure)
+          : fit.layoutHeight(text, candidate, lensCase.box, TYPO, measure, opts)
+        if (h <= lensCase.box.usableH - 3) {
+          size = candidate
+          break
+        }
+      }
+      const cap = maxSizeForWholeWords(text, lensCase.box, measure, {
+        startEm: sl.startEm,
+        endEm: sl.endEm,
+      })
+      const sizeCap = isCue ? cap / 0.5 : cap
+      if (Number.isFinite(sizeCap) && sizeCap < size) {
+        shrunk++
+        size = Math.max(WORD_FIT_MIN, Math.floor(sizeCap))
+      }
+      smallest = Math.min(smallest, size)
+      // The assertion: at the size it renders at, the widest word fits.
+      const rendered = isCue ? size * 0.5 : size
+      const widest = widestWordWidth(text, rendered, measure, {
+        startEm: sl.startEm,
+        endEm: sl.endEm,
+      })
+      if (widest > lensCase.box.contentW) {
+        unfittable++
+        if (wordExamples.length < 3) {
+          wordExamples.push(`${ep.id}@${lensCase.label} ${Math.round(widest)}px > ${Math.round(lensCase.box.contentW)}px at ${rendered}px`)
+        }
+      }
+    }
+  }
+  perLens.push({
+    lens: lensCase.label,
+    pct: Math.round((shrunk / Math.max(1, totalSlides)) * 100),
+    smallest: Number.isFinite(smallest) ? smallest : 0,
+  })
+}
+check(
+  unfittable === 0,
+  'every word fits its column whole — nothing is hyphenated or split',
+  wordExamples.join(' | '),
+)
+console.log(
+  '  ..   slides shrunk to keep a long word whole: ' +
+    perLens.map((r) => `${r.lens} ${r.pct}% (min ${r.smallest}px)`).join(', '),
 )
 
 // Degenerate bodies must not hang or throw.
